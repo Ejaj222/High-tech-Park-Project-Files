@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration From</title>
+
+<style>
+    input{
+        border: 0;
+        width: 100%;
+    }
+   .radio_input{
+
+    width: 3%;
+
+    }
+    fieldset{
+        padding: 5px;
+        margin: 0;
+        border-radius: 5px;
+    }
+    tr{
+        border-radius: 5px;
+    }
+    .submit_btn{
+        padding: 10px 30px;
+        border: 0;
+        background: rgb(15, 2, 116);
+        color: #fff;
+        border-radius: 5px;
+    }
+    .submit_btn:hover{
+        padding: 10px 30px;
+        border: 0;
+        background: rgb(90, 69, 248);
+        color: #fff;
+        border-radius: 5px;
+    }
+</style>
+
+</head>
+<body style="width: 50%; margin: auto;">
+
+   
+
+    <form>
+        <fieldset style="padding: 25px; border-radius: 15px;">
+            <legend ><h2>Registration From</h2></legend>
+    <table>
+        <tbody>
+            <tr>
+                <fieldset><legend><label for="name">Your Name:</label></legend>
+                <input type="text" placeholder="John Doe">
+                </fieldset>
+            </tr><br>
+            <tr>
+                <fieldset><legend><label for="name">Your Email:</label></legend>
+                <input type="email" placeholder="youremail@xyz.com">
+                </fieldset>
+            </tr><br>
+           <tr>
+                <fieldset><legend><label for="name">Your DOB</label></legend>
+                    <input type="date" placeholder="20/11/2022">
+                </fieldset>
+           </tr><br>
+           <tr>
+            <fieldset><legend><label for="name">Gender</label></legend>
+                <input class="radio_input" type="radio" name="option"> <span>Male</span>
+                <input class="radio_input" type="radio" name="option"> <span>Female</span>
+            </fieldset>
+       </tr><br>
+        </tbody>
+    </table>
+    
+    <button class="submit_btn">Register</button>
+
+    </fieldset>
+    </form>
+</body>
+</html>
