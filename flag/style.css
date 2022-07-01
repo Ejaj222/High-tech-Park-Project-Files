@@ -1,0 +1,29 @@
+.italy_flag{
+    background: linear-gradient(to right, #008C45 33.3%, white 33.3%, white 66.6%, #CD212A 66.6%);  
+}
+
+.italy_flag {
+    width: 500px;
+    height: 300px;  
+    margin: auto; 
+    margin-top: 50px;
+} 
+
+.bd_flag-1{
+    width: 500px;
+    height: 300px;
+    background-color: #006a4e;
+    display: flex;
+    margin: auto;
+    margin-top: 50px;
+}
+
+.bd_flag-2{
+    width: 200px;
+    height: 200px;
+    background-color: #f42a41;
+    z-index: 10;
+    margin: auto;
+    vertical-align: middle;
+    border-radius: 50%;
+}
