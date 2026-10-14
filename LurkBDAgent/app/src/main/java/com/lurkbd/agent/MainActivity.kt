@@ -23,7 +23,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.lurkbd.agent.ui.LurkViewModel
-import com.lurkbd.agent.ui.components.VoiceFab
+import com.lurkbd.agent.ui.components.GoldMicFab
 import com.lurkbd.agent.ui.navigation.LurkDest
 import com.lurkbd.agent.ui.screens.hisab.HisabScreen
 import com.lurkbd.agent.ui.screens.home.HomeScreen
@@ -49,14 +49,14 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 val backStack by navController.currentBackStackEntryAsState()
                 val current = backStack?.destination?.route
-                val immersive = current == LurkDest.Home.route || current == LurkDest.Reminders.route
+                val darkNav = current == LurkDest.Home.route || current == LurkDest.Reminders.route
 
                 Box(Modifier.fillMaxSize()) {
                     Scaffold(
-                        containerColor = if (immersive) TealDark else SandSurface,
+                        containerColor = if (darkNav) TealDark else SandSurface,
                         bottomBar = {
                             NavigationBar(
-                                containerColor = if (immersive) TealPrimary else SandSurface,
+                                containerColor = if (darkNav) TealPrimary else Color.White,
                                 tonalElevation = 0.dp
                             ) {
                                 LurkDest.entries.forEach { dest ->
@@ -73,30 +73,18 @@ class MainActivity : ComponentActivity() {
                                         icon = { Icon(dest.icon, contentDescription = dest.label) },
                                         label = { Text(dest.label) },
                                         colors = NavigationBarItemDefaults.colors(
-                                            selectedIconColor = if (immersive) GoldAccent else TealPrimary,
-                                            selectedTextColor = if (immersive) GoldAccent else TealPrimary,
-                                            indicatorColor = if (immersive) {
-                                                GoldAccent.copy(alpha = 0.18f)
-                                            } else {
-                                                GoldAccent.copy(alpha = 0.22f)
-                                            },
-                                            unselectedIconColor = if (immersive) {
-                                                Color.White.copy(alpha = 0.7f)
-                                            } else {
-                                                InkMuted
-                                            },
-                                            unselectedTextColor = if (immersive) {
-                                                Color.White.copy(alpha = 0.7f)
-                                            } else {
-                                                InkMuted
-                                            }
+                                            selectedIconColor = GoldAccent,
+                                            selectedTextColor = GoldAccent,
+                                            indicatorColor = GoldAccent.copy(alpha = 0.18f),
+                                            unselectedIconColor = if (darkNav) Color.White.copy(0.75f) else TealPrimary.copy(0.7f),
+                                            unselectedTextColor = if (darkNav) Color.White.copy(0.75f) else InkMuted
                                         )
                                     )
                                 }
                             }
                         },
                         floatingActionButton = {
-                            VoiceFab(onClick = { vm.openVoice() })
+                            GoldMicFab(onClick = { vm.openVoice() })
                         }
                     ) { padding ->
                         NavHost(
@@ -104,9 +92,7 @@ class MainActivity : ComponentActivity() {
                             startDestination = LurkDest.Home.route,
                             modifier = Modifier.padding(padding)
                         ) {
-                            composable(LurkDest.Home.route) {
-                                HomeScreen(vm) { vm.openVoice() }
-                            }
+                            composable(LurkDest.Home.route) { HomeScreen(vm) { vm.openVoice() } }
                             composable(LurkDest.Hisab.route) { HisabScreen(vm) }
                             composable(LurkDest.Shop.route) { ShopScreen(vm) }
                             composable(LurkDest.Study.route) { StudyScreen(vm) }

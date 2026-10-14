@@ -1,437 +1,229 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>LurkBD Agent</title>
-  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
-  <style>
-    :root {
-      --teal: #0B4F4A;
-      --teal-dark: #062E2B;
-      --sand: #F7F3EC;
-      --card: #FFFBF5;
-      --gold: #D4AF37;
-      --gold-soft: #E8D5A3;
-      --ink: #1A2422;
-      --muted: #5C6B67;
-      --danger: #C45A4A;
-      --success: #2F7D4A;
-      --alert: #F5E6C8;
-    }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0; min-height: 100vh;
-      font-family: "Hind Siliguri", sans-serif;
-      background:
-        radial-gradient(ellipse at 15% 10%, #d7ebe7, transparent 45%),
-        radial-gradient(ellipse at 90% 0%, #efe4c8, transparent 40%),
-        linear-gradient(160deg, #e7efec, var(--sand));
-      display: grid; place-items: center; padding: 20px; color: var(--ink);
-    }
-    .phone {
-      width: min(390px, 100%); height: 780px; border-radius: 36px;
-      border: 3px solid #142826; overflow: hidden; position: relative;
-      background: var(--sand);
-      box-shadow: 0 28px 60px rgba(11,79,74,.28);
-      display: flex; flex-direction: column;
-    }
-    .screen { flex: 1; overflow: auto; position: relative; }
-    .tab { display: none; min-height: 100%; }
-    .tab.active { display: block; }
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>LurkBD Agent</title>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet"/>
+<style>
+:root{--teal:#0B4F4A;--teal-dark:#062E2B;--sand:#F7F3EC;--card:#FFFBF5;--gold:#D4AF37;--gold-soft:#E8D5A3;--ink:#1A2422;--muted:#5C6B67;--danger:#C45A4A;--success:#2F7D4A;--alert:#F8E9C8;--border:#E8DFD0}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:"Hind Siliguri",sans-serif;background:radial-gradient(ellipse at 20% 0,#d7ebe7,transparent 50%),linear-gradient(160deg,#e8f0ee,var(--sand));display:grid;place-items:center;padding:16px;color:var(--ink)}
+.phone{width:min(390px,100%);height:800px;border-radius:36px;border:3px solid #142826;overflow:hidden;position:relative;background:var(--sand);box-shadow:0 28px 60px rgba(11,79,74,.28);display:flex;flex-direction:column}
+.screen{flex:1;overflow:auto;position:relative}.tab{display:none;min-height:100%}.tab.active{display:block}
 
-    /* HOME — mockup match */
-    #home {
-      background: linear-gradient(180deg, var(--teal) 0%, var(--teal-dark) 48%, #3d5a45 72%, #c4a574 100%);
-      color: #fff; text-align: center; padding: 56px 28px 110px;
-      position: relative; overflow: hidden;
-    }
-    #home::before {
-      content: ""; position: absolute; inset: 0;
-      background:
-        linear-gradient(135deg, rgba(0,0,0,.18) 0 32%, transparent 32%),
-        radial-gradient(circle at 85% 72%, rgba(212,175,55,.12), transparent 40%);
-      pointer-events: none;
-    }
-    #home .brand {
-      font-family: "Playfair Display", serif; font-size: 44px; margin: 0; letter-spacing: .5px;
-      position: relative;
-    }
-    #home .agent {
-      display: flex; align-items: center; justify-content: center; gap: 10px;
-      color: var(--gold-soft); letter-spacing: 3px; font-size: 13px; margin-top: 4px;
-    }
-    #home .agent::before, #home .agent::after {
-      content: ""; width: 28px; height: 1px; background: rgba(232,213,163,.7);
-    }
-    #home h2 { font-size: 32px; margin: 28px 0 10px; font-weight: 700; }
-    #home .tag { color: rgba(245,240,230,.92); line-height: 1.5; margin: 0; }
-    #home .summary { color: var(--gold-soft); font-size: 13px; margin-top: 10px; }
-    .voice-pill {
-      margin: 48px auto 18px; display: inline-flex; align-items: center; gap: 8px;
-      border: 1.5px solid var(--gold); border-radius: 999px; padding: 12px 22px;
-      background: transparent; color: #F5F0E6; font: inherit; font-weight: 600; cursor: pointer;
-    }
-    .mic-wrap { display: grid; place-items: center; gap: 10px; }
-    .mic {
-      width: 96px; height: 96px; border-radius: 50%; border: 0; cursor: pointer;
-      background: var(--teal); color: var(--gold); font-size: 36px;
-      box-shadow: 0 0 0 8px rgba(212,175,55,.35), 0 0 0 16px rgba(232,213,163,.2);
-    }
-    .waves { display: flex; gap: 4px; justify-content: center; align-items: center; height: 28px; }
-    .waves span { width: 3px; background: var(--gold); border-radius: 2px; display: block; }
+/* HOME */
+#home{background:linear-gradient(180deg,var(--teal) 0%,var(--teal-dark) 42%,#3a5648 62%,#b8955e 82%,#d4b888 100%);color:#fff;text-align:center;padding:58px 28px 110px;position:relative;overflow:hidden}
+#home::before{content:"";position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,0,0,.2) 0 30%,transparent 30%),radial-gradient(circle at 82% 78%,rgba(212,175,55,.14),transparent 42%);pointer-events:none}
+#home .brand{font-family:"Playfair Display",serif;font-size:44px;margin:0;position:relative;z-index:1}
+#home .agent{display:flex;align-items:center;justify-content:center;gap:10px;color:var(--gold);letter-spacing:3px;font-size:14px;font-family:"Playfair Display",serif;margin-top:4px;position:relative;z-index:1}
+#home .agent::before,#home .agent::after{content:"";width:26px;height:1px;background:rgba(232,213,163,.75)}
+#home h2{font-size:32px;margin:30px 0 10px;font-weight:700;position:relative;z-index:1}
+#home .tag{opacity:.95;line-height:1.55;margin:0;font-size:15px;position:relative;z-index:1}
+#home .sum{color:var(--gold-soft);font-size:12px;margin-top:8px;position:relative;z-index:1}
+.voice-pill{margin:48px auto 20px;display:inline-flex;align-items:center;gap:8px;border:1.5px solid var(--gold);border-radius:999px;padding:12px 22px;background:transparent;color:#F5F0E6;font:inherit;font-weight:600;cursor:pointer;position:relative;z-index:1}
+.mic-big{width:96px;height:96px;border-radius:50%;border:0;cursor:pointer;background:var(--teal);color:var(--gold);font-size:36px;box-shadow:0 0 0 8px rgba(212,175,55,.45),0 0 0 16px rgba(232,213,163,.25);position:relative;z-index:1}
+.waves{display:flex;gap:3px;justify-content:center;align-items:center;height:28px;margin-top:14px;position:relative;z-index:1}.waves i{width:2.5px;background:var(--gold);border-radius:2px;display:block}
 
-    /* Shared header */
-    .teal-header {
-      background: linear-gradient(180deg, var(--teal), var(--teal-dark));
-      color: var(--gold); border-radius: 0 0 28px 28px;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 18px 12px;
-    }
-    .teal-header h1 { margin: 0; font-size: 26px; color: var(--gold); }
-    .teal-header button { border: 0; background: transparent; color: #fff; font-size: 20px; cursor: pointer; position: relative; }
-    .teal-header .dot::after {
-      content: ""; position: absolute; top: 2px; right: 2px; width: 8px; height: 8px;
-      border-radius: 50%; background: var(--gold);
-    }
-    .body { padding: 16px 18px 110px; }
-    .card {
-      background: var(--card); border-radius: 18px; padding: 16px;
-      box-shadow: 0 8px 20px rgba(11,79,74,.08); border: 1px solid rgba(255,255,255,.7);
-      margin-bottom: 12px;
-    }
-    .card.alert { background: var(--alert); border-color: rgba(212,175,55,.45); }
-    .split { display: grid; grid-template-columns: 1fr 1px 1fr; gap: 8px; text-align: center; }
-    .split .line { background: rgba(92,107,103,.15); }
-    .label-g { color: var(--success); font-weight: 600; }
-    .label-r { color: var(--danger); font-weight: 600; }
-    .amt { font-size: 24px; font-weight: 700; margin: 4px 0; }
-    .amt.g { color: var(--teal); }
-    .amt.r { color: var(--danger); }
-    .tiny { color: var(--muted); font-size: 12px; }
-    .section {
-      display: flex; justify-content: space-between; align-items: center;
-      margin: 14px 0 8px; color: var(--teal); font-weight: 600;
-    }
-    .section a { color: var(--gold); font-weight: 500; text-decoration: none; font-size: 14px; }
-    .item { display: flex; gap: 12px; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(11,79,74,.06); }
-    .item:last-child { border-bottom: 0; }
-    .avatar {
-      width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center;
-      background: #D7EBE7; color: var(--teal); font-weight: 700; flex-shrink: 0;
-    }
-    .item .meta { flex: 1; min-width: 0; }
-    .item .meta strong { display: block; }
-    .item .meta small { color: var(--muted); }
-    .item .tag { color: var(--gold); font-size: 12px; font-weight: 500; }
-    .item .right { font-weight: 600; color: var(--teal); }
-    .item .right.danger { color: var(--danger); }
-    .item .right.gold { color: var(--gold); }
-    .field, .btn {
-      width: 100%; border-radius: 14px; font: inherit; margin: 6px 0; padding: 12px 14px;
-    }
-    .field { border: 1px solid rgba(92,107,103,.3); background: var(--card); }
-    .btn {
-      border: 0; background: var(--teal); color: #F5F0E6; font-weight: 600; cursor: pointer;
-    }
-    .chips { display: flex; gap: 8px; flex-wrap: wrap; margin: 8px 0; }
-    .chip {
-      border: 1px solid rgba(11,79,74,.2); background: transparent; border-radius: 999px;
-      padding: 6px 12px; font: inherit; cursor: pointer;
-    }
-    .chip.on { background: rgba(212,175,55,.25); border-color: var(--gold); }
+/* headers */
+.hdr{background:var(--teal);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:16px 12px;position:relative}
+.hdr.gold-title h1{color:var(--gold)}.hdr h1{margin:0;font-size:26px;font-weight:700;color:#fff}
+.hdr button{border:0;background:transparent;color:#fff;font-size:20px;cursor:pointer;position:relative}
+.hdr .dot::after{content:"";position:absolute;top:2px;right:0;width:8px;height:8px;border-radius:50%;background:var(--gold)}
+.hdr.wavy::after{content:"";position:absolute;left:0;right:0;bottom:-18px;height:22px;background:var(--sand);border-radius:50% 50% 0 0/100% 100% 0 0;transform:scaleX(1.05)}
+.body{padding:20px 18px 110px}
 
-    /* Reminders dark */
-    #reminders {
-      background: linear-gradient(180deg, var(--teal-dark), #0A2A28 55%, #1A3A32);
-      color: var(--gold-soft); padding: 48px 18px 110px;
-    }
-    #reminders h1 { text-align: center; color: var(--gold); font-size: 30px; margin: 0 0 20px; }
-    .dark-card {
-      background: rgba(11,46,43,.8); border: 1px solid rgba(212,175,55,.45);
-      border-radius: 20px; padding: 16px; margin-bottom: 14px;
-    }
-    .dark-card h3 { margin: 0; color: var(--gold); }
-    .dark-card .sub { color: rgba(232,213,163,.7); font-size: 12px; margin-bottom: 10px; }
-    .dark-row { display: flex; justify-content: space-between; padding: 8px 0; }
+.card{background:var(--card);border-radius:20px;padding:16px;box-shadow:0 8px 20px rgba(11,79,74,.08);border:1px solid var(--border);margin-bottom:12px}
+.card.alert{background:var(--alert);border-color:rgba(212,175,55,.45)}
+.split{display:grid;grid-template-columns:1fr 1px 1fr;text-align:center;align-items:center}
+.split .line{background:rgba(92,107,103,.18);height:70px}
+.lbl-g{color:var(--success);font-weight:600}.lbl-r{color:var(--danger);font-weight:600}
+.amt{font-size:26px;font-weight:700;margin:6px 0}.amt.g{color:var(--teal)}.amt.r{color:var(--danger)}
+.tiny{color:var(--muted);font-size:11px}
+.sec{display:flex;justify-content:space-between;align-items:center;margin:14px 0 8px;color:var(--teal);font-weight:700;gap:8px}
+.sec a{color:var(--gold);font-weight:500;text-decoration:none;font-size:13px;margin-left:auto}
+.sec .ico{width:30px;height:30px;border-radius:50%;background:var(--gold);color:#fff;display:grid;place-items:center;font-size:14px;flex-shrink:0}
+.item{display:flex;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid rgba(11,79,74,.07)}
+.item:last-child{border-bottom:0}
+.av{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:#D7EBE7;color:var(--teal);font-weight:700;flex-shrink:0}
+.meta{flex:1;min-width:0}.meta strong{display:block;color:var(--teal)}.meta small{color:var(--muted)}
+.chip{display:inline-block;margin-top:4px;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:500;background:rgba(196,163,90,.15);color:var(--gold)}
+.chip.g{background:rgba(47,125,74,.12);color:var(--success)}.chip.p{background:rgba(123,94,167,.12);color:#7B5EA7}
+.right{font-weight:700;text-align:right}.right.d{color:var(--danger)}.right.s{color:var(--success)}.right.gold{color:var(--gold)}
+.field,.btn{width:100%;border-radius:14px;font:inherit;margin:6px 0;padding:12px 14px}
+.field{border:1px solid rgba(92,107,103,.3);background:var(--card)}
+.btn{border:0;background:var(--teal);color:#F5F0E6;font-weight:600;cursor:pointer}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.chipbtn{border:1px solid rgba(11,79,74,.2);background:transparent;border-radius:999px;padding:6px 12px;font:inherit;cursor:pointer}
+.chipbtn.on{background:rgba(212,175,55,.25);border-color:var(--gold)}
+.scan{width:100%;border:1.5px solid var(--gold);background:#fff;color:var(--gold);border-radius:14px;padding:14px;font:inherit;font-weight:600;cursor:pointer;margin-top:8px}
+.subnav{display:grid;grid-template-columns:repeat(4,1fr);background:#fff;border:1px solid var(--border);border-radius:14px;padding:10px 0;margin-bottom:12px;text-align:center}
+.subnav button{border:0;background:transparent;font:inherit;font-size:11px;color:var(--teal);cursor:pointer}
+.subnav button.on{color:var(--gold);font-weight:700;box-shadow:inset 0 -2px 0 var(--gold)}
+.toggle{accent-color:var(--teal)}
 
-    .fab {
-      position: absolute; right: 18px; bottom: 84px; z-index: 5;
-      width: 62px; height: 62px; border-radius: 50%; border: 3px solid #fff;
-      background: var(--gold); color: #fff; font-size: 24px; cursor: pointer;
-      box-shadow: 0 8px 18px rgba(11,79,74,.3);
-    }
-    nav {
-      position: absolute; left: 0; right: 0; bottom: 0; height: 72px; z-index: 4;
-      display: grid; grid-template-columns: repeat(5, 1fr);
-      background: var(--sand); border-top: 1px solid rgba(11,79,74,.1);
-    }
-    nav.dark { background: var(--teal); border-top-color: transparent; }
-    nav button {
-      border: 0; background: transparent; font: inherit; font-size: 11px;
-      color: var(--muted); cursor: pointer;
-    }
-    nav.dark button { color: rgba(255,255,255,.7); }
-    nav button.on { color: var(--teal); font-weight: 700; }
-    nav.dark button.on { color: var(--gold); }
+/* reminders */
+#reminders{background:linear-gradient(180deg,var(--teal-dark),#0A2A28 55%,#163A32);color:var(--gold-soft);padding:48px 18px 110px}
+#reminders>h1{text-align:center;color:var(--gold);font-size:30px;margin:0 0 20px}
+.dcard{background:rgba(11,46,43,.8);border:1px solid rgba(212,175,55,.45);border-radius:20px;padding:16px;margin-bottom:14px}
+.dcard h3{margin:0;color:var(--gold)}.dcard .sub{color:rgba(232,213,163,.7);font-size:12px;margin:4px 0 10px}
+.drow{display:flex;justify-content:space-between;padding:8px 0}
 
-    .overlay {
-      position: absolute; inset: 0; z-index: 10; display: none; place-items: center;
-      background: linear-gradient(180deg, rgba(26,16,8,.93), rgba(11,79,74,.95), rgba(6,46,43,.96));
-      padding: 24px; text-align: center; color: var(--gold-soft);
-    }
-    .overlay.show { display: grid; }
-    .overlay .brand { font-family: "Playfair Display", serif; color: var(--gold); font-size: 28px; margin: 0; }
-    .overlay .listen { color: var(--gold); font-size: 22px; font-weight: 700; margin: 18px 0; }
-    .overlay .bubble {
-      background: rgba(255,255,255,.08); border: 1px solid rgba(212,175,55,.35);
-      border-radius: 16px; padding: 14px; margin: 12px 0; color: #F5F0E6;
-    }
-    .qgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 14px 0; }
-    .qgrid button {
-      border: 1px solid rgba(212,175,55,.55); background: transparent; color: var(--gold-soft);
-      border-radius: 12px; padding: 12px; font: inherit; cursor: pointer;
-    }
-  </style>
+.fab{position:absolute;right:18px;bottom:84px;z-index:5;width:62px;height:62px;border-radius:50%;border:3px solid #fff;background:var(--gold);color:#fff;font-size:24px;cursor:pointer;box-shadow:0 8px 18px rgba(11,79,74,.3)}
+nav{position:absolute;left:0;right:0;bottom:0;height:72px;z-index:4;display:grid;grid-template-columns:repeat(5,1fr);background:#fff;border-top:1px solid rgba(11,79,74,.1)}
+nav.dark{background:var(--teal);border-top-color:transparent}
+nav button{border:0;background:transparent;font:inherit;font-size:11px;color:var(--muted);cursor:pointer}
+nav.dark button{color:rgba(255,255,255,.75)}
+nav button.on{color:var(--gold);font-weight:700}
+
+.overlay{position:absolute;inset:0;z-index:10;display:none;place-items:center;background:linear-gradient(180deg,rgba(26,16,8,.93),rgba(11,79,74,.95),rgba(6,46,43,.96));padding:24px;text-align:center;color:var(--gold-soft)}
+.overlay.show{display:grid}
+.overlay .brand{font-family:"Playfair Display",serif;color:var(--gold);font-size:28px;margin:0}
+.overlay .listen{color:var(--gold);font-size:22px;font-weight:700;margin:18px 0}
+.bubble{background:rgba(255,255,255,.08);border:1px solid rgba(212,175,55,.35);border-radius:16px;padding:14px;margin:12px 0;color:#F5F0E6}
+.qgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:14px 0}
+.qgrid button{border:1px solid rgba(212,175,55,.55);background:transparent;color:var(--gold-soft);border-radius:12px;padding:12px;font:inherit;cursor:pointer}
+.class-row{display:flex;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid var(--border)}
+.class-row:last-child{border-bottom:0}
+.class-row .t{width:52px;font-weight:700;color:var(--teal)}
+</style>
 </head>
 <body>
-  <div class="phone" id="phone">
-    <div class="screen">
-      <section class="tab active" id="home">
-        <h1 class="brand">LurkBD</h1>
-        <div class="agent">Agent</div>
-        <h2>আজকের হিসাব</h2>
-        <p class="tag">দৈনিক টাকা, দোকান, ওষুধ, আর নামাজ —<br/>সব এক অ্যাপে, সহজ হিসাবে।</p>
-        <p class="summary" id="homeSummary">আয় ৳12,450 · খরচ ৳350</p>
-        <button class="voice-pill" onclick="openVoice()">ভয়েস দিয়ে বলুন ▮▮▮</button>
-        <div class="mic-wrap">
-          <button class="mic" onclick="openVoice()">🎙️</button>
-          <div class="waves" id="waves"></div>
-        </div>
-      </section>
+<div class="phone">
+  <div class="screen">
+    <section class="tab active" id="home">
+      <h1 class="brand">LurkBD</h1>
+      <div class="agent">Agent</div>
+      <h2>আজকের হিসাব</h2>
+      <p class="tag">দৈনিক টাকা, দোকান, ওষুধ, আর নামাজ —<br>সব এক অ্যাপে, সহজ হিসাবে।</p>
+      <p class="sum" id="homeSummary">আয় ৳12,450 · খরচ ৳350</p>
+      <button class="voice-pill" onclick="openVoice()">ভয়েস দিয়ে বলুন <span style="letter-spacing:-1px">▮▮▮</span></button>
+      <div><button class="mic-big" onclick="openVoice()">🎙️</button></div>
+      <div class="waves" id="waves"></div>
+    </section>
 
-      <section class="tab" id="hisab">
-        <div class="teal-header">
-          <button>☰</button>
-          <h1>হিসাব</h1>
-          <button class="dot">🔔</button>
-        </div>
-        <div class="body">
-          <div class="card">
-            <div class="split">
-              <div>
-                <div class="label-g">↓ আয়</div>
-                <div class="amt g" id="income">৳12,450</div>
-                <div class="tiny">আজ</div>
-              </div>
-              <div class="line"></div>
-              <div>
-                <div class="label-r">↑ খরচ</div>
-                <div class="amt r" id="expense">৳350</div>
-                <div class="tiny">আজ</div>
-              </div>
-            </div>
-          </div>
-          <div class="section">নতুন এন্ট্রি</div>
-          <div class="chips">
-            <button class="chip on" id="chipExpense" onclick="setType(false)">খরচ</button>
-            <button class="chip" id="chipIncome" onclick="setType(true)">আয়</button>
-          </div>
-          <input class="field" id="amount" placeholder="পরিমাণ (৳)" />
-          <input class="field" id="category" value="বাজার" />
-          <input class="field" id="channel" value="নগদ" />
-          <button class="btn" onclick="saveTx()">সেভ করুন</button>
-          <div class="section">সাম্প্রতিক লেনদেন <a href="#">সব দেখুন ></a></div>
-          <div class="card" id="txList"></div>
-        </div>
-      </section>
-
-      <section class="tab" id="shop">
-        <div class="teal-header">
-          <button>☰</button>
-          <h1>দোকান</h1>
-          <button class="dot">🔔</button>
-        </div>
-        <div class="body">
-          <div class="section">১. বাকি (গ্রাহকের পাওনা)</div>
-          <div class="card" id="customers"></div>
-          <div class="section">২. স্টক (মজুত)</div>
-          <div class="card" id="products"></div>
-        </div>
-      </section>
-
-      <section class="tab" id="study">
-        <div class="teal-header">
-          <button>☰</button>
-          <h1>পড়াশোনা</h1>
-          <button class="dot">🔔</button>
-        </div>
-        <div class="body">
-          <div class="chips">
-            <button class="chip on">রুটিন</button>
-            <button class="chip">নোট</button>
-            <button class="chip">রেজাল্ট</button>
-          </div>
-          <div class="section">আজকের ক্লাস</div>
-          <div class="card">
-            <div class="item"><div class="avatar">গ</div><div class="meta"><strong>গণিত</strong><small>আজ · 09:00–10:00</small></div><div class="right gold">অ্যালার্ম</div></div>
-            <div class="item"><div class="avatar">ই</div><div class="meta"><strong>ইংরেজি</strong><small>আজ · 10:30–11:30</small></div><div class="right gold">অ্যালার্ম</div></div>
-          </div>
-          <div class="section">নোট ও রেজাল্ট</div>
-          <div class="card">
-            <div class="item"><div class="avatar">৫</div><div class="meta"><strong>গণিত — অধ্যায় ৫</strong><small>সূত্র ও উদাহরণ নোট</small></div></div>
-            <div class="item"><div class="avatar">প</div><div class="meta"><strong>পদার্থ · ক্লাস টেস্ট</strong><small>রেজাল্ট</small></div><div class="right gold">18/20</div></div>
-          </div>
-        </div>
-      </section>
-
-      <section class="tab" id="reminders">
-        <h1>রিমাইন্ডার</h1>
-        <div class="dark-card">
-          <h3>ওষুধ</h3>
-          <div class="sub">মেডিসিন শিডিউল</div>
-          <div class="dark-row"><span>Metformin</span><span>08:00 · ON</span></div>
-          <div class="dark-row"><span>Vitamin D</span><span>22:00 · ON</span></div>
-        </div>
-        <div class="dark-card">
-          <h3>নামাজ</h3>
-          <div class="sub">পাঁচ ওয়াক্ত নামাজ (ঢাকা)</div>
-          <div class="dark-row"><span>ফজর</span><span>05:05</span></div>
-          <div class="dark-row"><span>যোহর</span><span>12:10</span></div>
-          <div class="dark-row"><span>আসর</span><span>15:45</span></div>
-          <div class="dark-row"><span>মাগরিব</span><span>17:55</span></div>
-          <div class="dark-row"><span>এশা</span><span>19:20</span></div>
-        </div>
-        <div class="dark-card">
-          <h3>রোজা</h3>
-          <div class="sub">রমজানের সময়সূচি</div>
-          <div class="dark-row"><span>সেহেরি</span><span>04:20</span></div>
-          <div class="dark-row"><span>ইফতার</span><span>17:55</span></div>
-        </div>
-      </section>
-    </div>
-
-    <button class="fab" onclick="openVoice()">🎙️</button>
-    <nav id="nav">
-      <button class="on" data-tab="home" onclick="showTab('home', this)">হোম</button>
-      <button data-tab="hisab" onclick="showTab('hisab', this)">হিসাব</button>
-      <button data-tab="shop" onclick="showTab('shop', this)">দোকান</button>
-      <button data-tab="study" onclick="showTab('study', this)">পড়াশোনা</button>
-      <button data-tab="reminders" onclick="showTab('reminders', this)">রিমাইন্ডার</button>
-    </nav>
-
-    <div class="overlay" id="voice">
-      <div>
-        <p class="brand">LurkBD</p>
-        <div style="opacity:.85;font-size:13px;margin-top:4px">শুনুন। বলুন। গুছিয়ে রাখুন।</div>
-        <div class="listen" id="voiceMsg">শুনছি…</div>
-        <button class="mic" onclick="listenDemo()" style="margin:8px auto">🎙️</button>
-        <div class="bubble" id="transcript" style="display:none"></div>
-        <div id="preview" style="color:var(--gold);font-weight:600;min-height:22px"></div>
-        <div class="qgrid">
-          <button onclick="useSample('আজ বাজারে তিনশ টাকা খরচ')">খরচ যোগ</button>
-          <button onclick="useSample('করিম ভাইয়ের বাকি পাঁচশ যোগ করো')">বাকি আপডেট</button>
-          <button onclick="useSample('সকাল আটটায় মেটফরমিন মনে করাও')">ওষুধ অ্যালার্ম</button>
-          <button onclick="useSample('রোজায় সেহেরি ও ইফতারের অ্যালার্ম দাও')">সেহেরি</button>
-        </div>
-        <button class="btn" onclick="confirmVoice()">নিশ্চিত করে সেভ</button>
-        <button class="btn" style="margin-top:8px;background:transparent;border:1px solid rgba(212,175,55,.5);color:var(--gold-soft)" onclick="closeVoice()">বন্ধ</button>
+    <section class="tab" id="hisab">
+      <div class="hdr"><button>☰</button><h1>হিসাব</h1><button class="dot">🔔</button></div>
+      <div class="body">
+        <div class="card"><div class="split">
+          <div><div class="lbl-g">↓ আয়</div><div class="amt g" id="income">৳12,450</div><div class="tiny">— আজ —</div></div>
+          <div class="line"></div>
+          <div><div class="lbl-r">↑ খরচ</div><div class="amt r" id="expense">৳350</div><div class="tiny">— আজ —</div></div>
+        </div></div>
+        <div class="sec">নতুন এন্ট্রি</div>
+        <div class="chips"><button class="chipbtn on" id="chipExpense" onclick="setType(false)">খরচ</button><button class="chipbtn" id="chipIncome" onclick="setType(true)">আয়</button></div>
+        <input class="field" id="amount" placeholder="পরিমাণ (৳)"/><input class="field" id="category" value="বাজার"/><input class="field" id="channel" value="নগদ"/>
+        <button class="btn" onclick="saveTx()">সেভ করুন</button>
+        <div class="sec">সাম্প্রতিক লেনদেন <a href="#">সব দেখুন ></a></div>
+        <div class="card" id="txList"></div>
       </div>
-    </div>
+    </section>
+
+    <section class="tab" id="shop">
+      <div class="hdr gold-title wavy"><button>☰</button><h1>দোকান</h1><button class="dot">🔔</button></div>
+      <div class="body" style="padding-top:28px">
+        <div class="sec"><span class="ico">👤</span> ১. বাকি (গ্রাহকের পাওনা)</div>
+        <div class="card" id="customers"></div>
+        <div class="sec"><span class="ico">📦</span> ২. স্টক (মজুত)</div>
+        <div id="products"></div>
+      </div>
+    </section>
+
+    <section class="tab" id="study">
+      <div class="hdr wavy"><button>☰</button><h1>পড়াশোনা</h1><button class="dot">🔔</button></div>
+      <div class="body" style="padding-top:28px">
+        <div class="subnav">
+          <button class="on">📅<br>রুটিন</button><button>📝<br>নোট</button><button>📁<br>ডকুমেন্ট</button><button>📊<br>রেজাল্ট</button>
+        </div>
+        <div class="sec"><span class="ico">📅</span> আজকের ক্লাস রুটিন <a href="#">সব দেখুন ></a></div>
+        <div class="card">
+          <div class="class-row"><span class="t">09:00</span><span style="flex:1">গণিত</span><input class="toggle" type="checkbox" checked/></div>
+          <div class="class-row"><span class="t">10:30</span><span style="flex:1">ইংরেজি</span><input class="toggle" type="checkbox" checked/></div>
+          <div class="class-row"><span class="t">12:00</span><span style="flex:1">পদার্থ</span><input class="toggle" type="checkbox" checked/></div>
+        </div>
+        <div class="sec"><span class="ico">📝</span> নোট <a href="#">সব নোট ></a></div>
+        <div class="card"><div class="item"><div class="av" style="background:#E8D5A3">📄</div><div class="meta"><strong>গণিত — অধ্যায় ৫</strong><small>সর্বশেষ সম্পাদনা: আজ, 9:15 AM</small></div><div>⋮</div></div></div>
+        <button class="scan">▢  স্ক্যান করে রাখুন</button>
+      </div>
+    </section>
+
+    <section class="tab" id="reminders">
+      <h1>রিমাইন্ডার</h1>
+      <div class="dcard"><h3>💊 ওষুধ</h3><div class="sub">মেডিসিন শিডিউল</div>
+        <div class="drow"><span>Metformin</span><span>08:00 · ON</span></div>
+        <div class="drow"><span>Vitamin D</span><span>22:00 · ON</span></div>
+      </div>
+      <div class="dcard"><h3>🕌 নামাজ</h3><div class="sub">পাঁচ ওয়াক্ত নামাজ (ঢাকা)</div>
+        <div class="drow"><span>ফজর</span><span>05:05</span></div>
+        <div class="drow"><span>যোহর</span><span>12:10</span></div>
+        <div class="drow"><span>আসর</span><span>15:45</span></div>
+        <div class="drow"><span>মাগরিব</span><span>17:55</span></div>
+        <div class="drow"><span>এশা</span><span>19:20</span></div>
+      </div>
+      <div class="dcard"><h3>🌙 রোজা</h3><div class="sub">রমজানের সময়সূচি</div>
+        <div class="drow"><span>সেহেরি</span><span>04:20</span></div>
+        <div class="drow"><span>ইফতার</span><span>17:55</span></div>
+      </div>
+    </section>
   </div>
 
-  <script>
-    let income = 12450, expense = 350, isIncome = false, pending = null;
-    const txs = [
-      { title: "বাজার", sub: "আজ, 09:15 AM", amount: 300, tag: "Cash", income: false },
-      { title: "বেতন", sub: "আজ, 08:30 AM", amount: 12450, tag: "bKash", income: true },
-      { title: "মোবাইল রিচার্জ", sub: "গতকাল, 07:45 PM", amount: 50, tag: "Nagad", income: false }
-    ];
-    const customers = [
-      { name: "করিম ভাই", bal: 2500 },
-      { name: "রহিমা বেগম", bal: 850 }
-    ];
-    const products = [
-      { name: "চাল", qty: "40 কেজি", low: false },
-      { name: "তেল", qty: "12 লিটার", low: false },
-      { name: "সাবান", qty: "3 প্যাকেট", low: true }
-    ];
+  <button class="fab" onclick="openVoice()">🎙️</button>
+  <nav id="nav" class="dark">
+    <button class="on" data-tab="home" onclick="showTab('home',this)">হোম</button>
+    <button data-tab="hisab" onclick="showTab('hisab',this)">হিসাব</button>
+    <button data-tab="shop" onclick="showTab('shop',this)">দোকান</button>
+    <button data-tab="study" onclick="showTab('study',this)">পড়াশোনা</button>
+    <button data-tab="reminders" onclick="showTab('reminders',this)">রিমাইন্ডার</button>
+  </nav>
 
-    // wave bars
-    const waves = document.getElementById("waves");
-    [8,14,22,12,18,10,16,24,14,20,12,8].forEach(h => {
-      const s = document.createElement("span"); s.style.height = h + "px"; waves.appendChild(s);
-    });
-
-    function money(n){ return "৳" + Math.round(n).toLocaleString("en-US"); }
-    function render(){
-      document.getElementById("income").textContent = money(income);
-      document.getElementById("expense").textContent = money(expense);
-      document.getElementById("homeSummary").textContent = `আয় ${money(income)} · খরচ ${money(expense)}`;
-      document.getElementById("txList").innerHTML = txs.map(t => `
-        <div class="item">
-          <div class="avatar">${t.title.slice(0,1)}</div>
-          <div class="meta"><strong>${t.title}</strong><small>${t.sub}</small><div class="tag">${t.tag}</div></div>
-          <div class="right ${t.income ? "" : "danger"}">${money(t.amount)}</div>
-        </div>`).join("");
-      document.getElementById("customers").innerHTML = customers.map(c => `
-        <div class="item">
-          <div class="avatar">${c.name.slice(0,1)}</div>
-          <div class="meta"><strong>${c.name}</strong><small>বাকি</small></div>
-          <div class="right gold">${money(c.bal)}</div>
-        </div>`).join("");
-      document.getElementById("products").innerHTML = products.map(p => `
-        <div class="item ${p.low ? "card alert" : ""}" style="${p.low ? "border-radius:14px;padding:10px;margin:6px 0" : ""}">
-          <div class="avatar">${p.low ? "!" : p.name.slice(0,1)}</div>
-          <div class="meta"><strong>${p.name}</strong><small>${p.low ? "সাবান শেষ হতে যাচ্ছে" : "(মজুত)"}</small></div>
-          <div class="right ${p.low ? "danger" : ""}">${p.qty}</div>
-        </div>`).join("");
-    }
-    function showTab(id, btn){
-      document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
-      document.getElementById(id).classList.add("active");
-      document.querySelectorAll("#nav button").forEach(b => b.classList.remove("on"));
-      btn.classList.add("on");
-      document.getElementById("nav").classList.toggle("dark", id === "home" || id === "reminders");
-    }
-    function setType(v){
-      isIncome = v;
-      document.getElementById("chipIncome").classList.toggle("on", v);
-      document.getElementById("chipExpense").classList.toggle("on", !v);
-    }
-    function saveTx(){
-      const amount = Number(document.getElementById("amount").value || 0);
-      if(!amount) return;
-      const category = document.getElementById("category").value || (isIncome ? "আয়" : "খরচ");
-      const channel = document.getElementById("channel").value || "নগদ";
-      if(isIncome) income += amount; else expense += amount;
-      txs.unshift({ title: category, sub: "এখন", amount, tag: channel, income: isIncome });
-      document.getElementById("amount").value = "";
-      render();
-    }
-    function openVoice(){ document.getElementById("voice").classList.add("show"); document.getElementById("voiceMsg").textContent = "শুনছি…"; }
-    function closeVoice(){ document.getElementById("voice").classList.remove("show"); pending=null; document.getElementById("transcript").style.display="none"; }
-    function listenDemo(){ document.getElementById("voiceMsg").textContent = "শুনছি…"; }
-    function useSample(text){
-      const el = document.getElementById("transcript");
-      el.style.display = "block";
-      el.textContent = "“" + text + "”";
-      if(text.includes("খরচ")) pending = { type:"expense", amount:300, category:"বাজার", label:"খরচ ৳300 · বাজার · নগদ" };
-      else if(text.includes("বাকি")) pending = { type:"credit", amount:500, label:"করিম ভাই এর বাকি +৳500" };
-      else if(text.includes("ওষুধ") || text.includes("মেটফরমিন")) pending = { type:"med", label:"Metformin অ্যালার্ম 08:00" };
-      else pending = { type:"ramadan", label:"সেহেরি ও ইফতার অ্যালার্ম ON" };
-      document.getElementById("preview").textContent = pending.label;
-      document.getElementById("voiceMsg").textContent = "নিশ্চিত করুন";
-    }
-    function confirmVoice(){
-      if(!pending) return;
-      if(pending.type==="expense"){ expense += pending.amount; txs.unshift({title:"বাজার", sub:"এখন", amount:300, tag:"নগদ", income:false}); }
-      if(pending.type==="credit"){ customers[0].bal += 500; }
-      render(); closeVoice();
-      if(pending?.type==="expense" || true) showTab("hisab", document.querySelector('[data-tab="hisab"]'));
-    }
-    render();
-    document.getElementById("nav").classList.add("dark");
-  </script>
+  <div class="overlay" id="voice">
+    <div>
+      <p class="brand">LurkBD</p>
+      <div style="opacity:.85;font-size:13px;margin-top:4px">শুনুন। বলুন। গুছিয়ে রাখুন।</div>
+      <div class="listen" id="voiceMsg">শুনছি…</div>
+      <button class="mic-big" onclick="listenDemo()">🎙️</button>
+      <div class="bubble" id="transcript" style="display:none"></div>
+      <div id="preview" style="color:var(--gold);font-weight:600;min-height:22px"></div>
+      <div class="qgrid">
+        <button onclick="useSample('আজ বাজারে তিনশ টাকা খরচ')">খরচ যোগ</button>
+        <button onclick="useSample('করিম ভাইয়ের বাকি পাঁচশ যোগ করো')">বাকি আপডেট</button>
+        <button onclick="useSample('সকাল আটটায় মেটফরমিন মনে করাও')">ওষুধ অ্যালার্ম</button>
+        <button onclick="useSample('রোজায় সেহেরি ও ইফতারের অ্যালার্ম দাও')">সেহেরি</button>
+      </div>
+      <button class="btn" onclick="confirmVoice()">নিশ্চিত করে সেভ</button>
+      <button class="btn" style="margin-top:8px;background:transparent;border:1px solid rgba(212,175,55,.5);color:var(--gold-soft)" onclick="closeVoice()">বন্ধ</button>
+    </div>
+  </div>
+</div>
+<script>
+let income=12450,expense=350,isIncome=false,pending=null;
+const txs=[
+  {title:"বাজার",sub:"আজ, 09:15 AM",amount:300,tag:"Cash",chip:"",income:false},
+  {title:"বেতন",sub:"আজ, 08:30 AM",amount:12450,tag:"bKash",chip:"g",income:true},
+  {title:"মোবাইল রিচার্জ",sub:"গতকাল, 07:45 PM",amount:50,tag:"Nagad",chip:"p",income:false},
+  {title:"লোন কিস্তি",sub:"গতকাল, 11:20 AM",amount:2130,tag:"Bank",chip:"",income:false}
+];
+const customers=[{name:"করিম ভাই",bal:2500},{name:"রহিমা বেগম",bal:850}];
+const products=[{name:"চাল",qty:"120 কেজি",low:false},{name:"তেল",qty:"35 লিটার",low:false},{name:"সাবান",qty:"0 পিস",low:true}];
+const waves=document.getElementById("waves");
+[8,14,22,12,18,10,16,24,14,20,12,8].forEach(h=>{const i=document.createElement("i");i.style.height=h+"px";waves.appendChild(i)});
+function money(n){return "৳"+Math.round(n).toLocaleString("en-US")}
+function render(){
+  document.getElementById("income").textContent=money(income);
+  document.getElementById("expense").textContent=money(expense);
+  document.getElementById("homeSummary").textContent=`আয় ${money(income)} · খরচ ${money(expense)}`;
+  document.getElementById("txList").innerHTML=txs.map(t=>`<div class="item"><div class="av">${t.title[0]}</div><div class="meta"><strong>${t.title}</strong><small>${t.sub}</small><span class="chip ${t.chip}">${t.tag}</span></div><div class="right ${t.income?"s":"d"}">${money(t.amount)}</div></div>`).join("");
+  document.getElementById("customers").innerHTML=customers.map(c=>`<div class="item"><div class="av">${c.name[0]}</div><div class="meta"><strong>${c.name}</strong></div><div class="right">${money(c.bal)}<div class="tiny">বাকি</div></div></div>`).join("");
+  document.getElementById("products").innerHTML=products.map(p=>`<div class="card ${p.low?"alert":""}"><div class="item" style="border:0;padding:0"><div class="av" style="${p.low?"background:var(--gold);color:#fff":""}">${p.low?"!":"📦"}</div><div class="meta"><strong>${p.name}</strong><small style="${p.low?"color:var(--danger)":""}">${p.low?"⚠ সাবান শেষ হতে যাচ্ছে":"(মজুত)"}</small></div><div class="right ${p.low?"d":""}">${p.qty}<div class="tiny">${p.low?"":"(মজুত)"}</div></div></div></div>`).join("");
+}
+function showTab(id,btn){document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));document.getElementById(id).classList.add("active");document.querySelectorAll("#nav button").forEach(b=>b.classList.remove("on"));btn.classList.add("on");document.getElementById("nav").classList.toggle("dark",id==="home"||id==="reminders")}
+function setType(v){isIncome=v;document.getElementById("chipIncome").classList.toggle("on",v);document.getElementById("chipExpense").classList.toggle("on",!v)}
+function saveTx(){const amount=Number(document.getElementById("amount").value||0);if(!amount)return;const category=document.getElementById("category").value||(isIncome?"আয়":"খরচ");const channel=document.getElementById("channel").value||"নগদ";if(isIncome)income+=amount;else expense+=amount;txs.unshift({title:category,sub:"এখন",amount,tag:channel,chip:"",income:isIncome});document.getElementById("amount").value="";render()}
+function openVoice(){document.getElementById("voice").classList.add("show");document.getElementById("voiceMsg").textContent="শুনছি…"}
+function closeVoice(){document.getElementById("voice").classList.remove("show");pending=null;document.getElementById("transcript").style.display="none"}
+function listenDemo(){document.getElementById("voiceMsg").textContent="শুনছি…"}
+function useSample(text){const el=document.getElementById("transcript");el.style.display="block";el.textContent="“"+text+"”";if(text.includes("খরচ"))pending={type:"expense",amount:300,label:"খরচ ৳300 · বাজার · নগদ"};else if(text.includes("বাকি"))pending={type:"credit",amount:500,label:"করিম ভাই এর বাকি +৳500"};else if(text.includes("মেটফরমিন"))pending={type:"med",label:"Metformin অ্যালার্ম 08:00"};else pending={type:"ramadan",label:"সেহেরি ও ইফতার অ্যালার্ম ON"};document.getElementById("preview").textContent=pending.label;document.getElementById("voiceMsg").textContent="নিশ্চিত করুন"}
+function confirmVoice(){if(!pending)return;if(pending.type==="expense"){expense+=pending.amount;txs.unshift({title:"বাজার",sub:"এখন",amount:300,tag:"নগদ",chip:"",income:false})}if(pending.type==="credit")customers[0].bal+=500;render();closeVoice();showTab("hisab",document.querySelector('[data-tab="hisab"]'))}
+render();
+</script>
 </body>
 </html>

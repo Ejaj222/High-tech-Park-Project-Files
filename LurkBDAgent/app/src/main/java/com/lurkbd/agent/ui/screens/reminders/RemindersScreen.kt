@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -37,6 +38,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -46,7 +48,6 @@ import com.lurkbd.agent.ui.components.PrimaryButton
 import com.lurkbd.agent.ui.theme.GoldAccent
 import com.lurkbd.agent.ui.theme.GoldSoft
 import com.lurkbd.agent.ui.theme.TealDark
-import com.lurkbd.agent.ui.theme.TealPrimary
 import com.lurkbd.agent.util.formatMinutes
 
 @Composable
@@ -61,11 +62,7 @@ fun RemindersScreen(vm: LurkViewModel) {
     Box(
         Modifier
             .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    listOf(TealDark, Color(0xFF0A2A28), Color(0xFF1A3A32))
-                )
-            )
+            .background(Brush.verticalGradient(listOf(TealDark, Color(0xFF0A2A28), Color(0xFF163A32))))
     ) {
         Column(
             Modifier
@@ -83,55 +80,51 @@ fun RemindersScreen(vm: LurkViewModel) {
             )
             Spacer(Modifier.height(20.dp))
 
-            DarkGoldCard {
-                CardHeader(Icons.Outlined.LocalPharmacy, "ওষুধ", "মেডিসিন শিডিউল")
+            GoldPanel {
+                PanelHead(Icons.Outlined.LocalPharmacy, "ওষুধ", "মেডিসিন শিডিউল")
                 medicines.forEach { med ->
                     Row(
                         Modifier.fillMaxWidth().padding(vertical = 8.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Icon(Icons.Outlined.LocalPharmacy, null, tint = GoldAccent, modifier = Modifier.size(20.dp))
-                        Spacer(Modifier.size(10.dp))
+                        Icon(Icons.Outlined.LocalPharmacy, null, tint = GoldAccent, modifier = Modifier.size(18.dp))
+                        Spacer(Modifier.width(10.dp))
                         Column(Modifier.weight(1f)) {
                             Text(med.name, color = GoldSoft, fontWeight = FontWeight.SemiBold)
-                            Text(formatMinutes(med.timeMinutes), color = GoldSoft.copy(alpha = 0.75f), fontSize = 13.sp)
+                            Text(formatMinutes(med.timeMinutes), color = GoldSoft.copy(0.75f), fontSize = 13.sp)
                         }
                         Switch(
                             checked = med.active,
                             onCheckedChange = { vm.toggleMedicine(med, it) },
-                            colors = SwitchDefaults.colors(
-                                checkedTrackColor = GoldAccent,
-                                checkedThumbColor = Color.White
-                            )
+                            colors = SwitchDefaults.colors(checkedTrackColor = GoldAccent, checkedThumbColor = Color.White)
                         )
                     }
                 }
                 Spacer(Modifier.height(8.dp))
                 LurkField(name, { name = it }, "ওষুধের নাম")
-                Spacer(Modifier.height(8.dp))
+                Spacer(Modifier.height(6.dp))
                 LurkField(timeText, { timeText = it }, "সময় (HH:MM)")
                 Spacer(Modifier.height(8.dp))
                 PrimaryButton("ওষুধ অ্যালার্ম যোগ") {
                     if (name.isBlank()) return@PrimaryButton
                     val parts = timeText.split(":", ".", limit = 2)
-                    val minutes = (parts.getOrNull(0)?.toIntOrNull() ?: 8) * 60 +
-                        (parts.getOrNull(1)?.toIntOrNull() ?: 0)
+                    val minutes = (parts.getOrNull(0)?.toIntOrNull() ?: 8) * 60 + (parts.getOrNull(1)?.toIntOrNull() ?: 0)
                     vm.addMedicine(name.trim(), minutes)
                     name = ""
                 }
             }
 
             Spacer(Modifier.height(14.dp))
-            DarkGoldCard {
-                CardHeader(Icons.Outlined.Place, "নামাজ", "পাঁচ ওয়াক্ত নামাজ (ঢাকা)")
+            GoldPanel {
+                PanelHead(Icons.Outlined.Place, "নামাজ", "পাঁচ ওয়াক্ত নামাজ (ঢাকা)")
                 prayers.forEach { (waqt, time) ->
                     Row(
                         Modifier.fillMaxWidth().padding(vertical = 8.dp),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(Icons.Outlined.Place, null, tint = GoldAccent, modifier = Modifier.size(18.dp))
-                            Spacer(Modifier.size(8.dp))
+                            Icon(Icons.Outlined.Place, null, tint = GoldAccent, modifier = Modifier.size(16.dp))
+                            Spacer(Modifier.width(8.dp))
                             Text(waqt, color = GoldSoft)
                         }
                         Text(time, color = GoldAccent, fontWeight = FontWeight.Medium)
@@ -140,19 +133,17 @@ fun RemindersScreen(vm: LurkViewModel) {
             }
 
             Spacer(Modifier.height(14.dp))
-            DarkGoldCard {
-                CardHeader(Icons.Outlined.Brightness2, "রোজা", "রমজানের সময়সূচি")
+            GoldPanel {
+                PanelHead(Icons.Outlined.Brightness2, "রোজা", "রমজানের সময়সূচি")
                 Row(
                     Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Column {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(Icons.Outlined.Alarm, null, tint = GoldAccent, modifier = Modifier.size(18.dp))
-                            Spacer(Modifier.size(8.dp))
-                            Text(ramadan.first, color = GoldSoft)
-                        }
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(Icons.Outlined.Alarm, null, tint = GoldAccent, modifier = Modifier.size(18.dp))
+                        Spacer(Modifier.width(8.dp))
+                        Text(ramadan.first, color = GoldSoft)
                     }
                     Switch(
                         checked = ramadanOn,
@@ -160,10 +151,7 @@ fun RemindersScreen(vm: LurkViewModel) {
                             ramadanOn = it
                             vm.ramadanAlarms.value = ramadan.first to it
                         },
-                        colors = SwitchDefaults.colors(
-                            checkedTrackColor = GoldAccent,
-                            checkedThumbColor = Color.White
-                        )
+                        colors = SwitchDefaults.colors(checkedTrackColor = GoldAccent, checkedThumbColor = Color.White)
                     )
                 }
             }
@@ -172,23 +160,19 @@ fun RemindersScreen(vm: LurkViewModel) {
 }
 
 @Composable
-private fun DarkGoldCard(content: @Composable () -> Unit) {
+private fun GoldPanel(content: @Composable () -> Unit) {
     Column(
         Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(20.dp))
             .background(Color(0xCC0B2E2B))
-            .border(1.dp, GoldAccent.copy(alpha = 0.45f), RoundedCornerShape(20.dp))
+            .border(1.dp, GoldAccent.copy(0.45f), RoundedCornerShape(20.dp))
             .padding(16.dp)
     ) { content() }
 }
 
 @Composable
-private fun CardHeader(
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
-    title: String,
-    subtitle: String
-) {
+private fun PanelHead(icon: ImageVector, title: String, subtitle: String) {
     Row(
         Modifier.fillMaxWidth().padding(bottom = 10.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -196,18 +180,15 @@ private fun CardHeader(
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Box(
-                Modifier
-                    .size(34.dp)
-                    .clip(CircleShape)
-                    .background(GoldAccent.copy(alpha = 0.2f)),
+                Modifier.size(34.dp).clip(CircleShape).background(GoldAccent.copy(0.2f)),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(icon, null, tint = GoldAccent, modifier = Modifier.size(18.dp))
             }
-            Spacer(Modifier.size(10.dp))
+            Spacer(Modifier.width(10.dp))
             Column {
                 Text(title, color = GoldAccent, fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                Text(subtitle, color = GoldSoft.copy(alpha = 0.7f), fontSize = 12.sp)
+                Text(subtitle, color = GoldSoft.copy(0.7f), fontSize = 12.sp)
             }
         }
         Icon(Icons.Outlined.Notifications, null, tint = GoldAccent)

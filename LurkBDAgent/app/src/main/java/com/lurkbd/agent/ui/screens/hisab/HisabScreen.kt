@@ -1,7 +1,6 @@
 package com.lurkbd.agent.ui.screens.hisab
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,7 +23,6 @@ import androidx.compose.material.icons.outlined.ShoppingBasket
 import androidx.compose.material.icons.outlined.WorkOutline
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -40,15 +38,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.lurkbd.agent.ui.LurkViewModel
-import com.lurkbd.agent.ui.components.ListRowRich
 import com.lurkbd.agent.ui.components.LurkField
+import com.lurkbd.agent.ui.components.MockCard
 import com.lurkbd.agent.ui.components.PrimaryButton
-import com.lurkbd.agent.ui.components.ScreenBody
-import com.lurkbd.agent.ui.components.SectionTitle
-import com.lurkbd.agent.ui.components.SoftCard
-import com.lurkbd.agent.ui.components.TealAppHeader
+import com.lurkbd.agent.ui.components.ScreenPad
+import com.lurkbd.agent.ui.components.SectionHead
+import com.lurkbd.agent.ui.components.TxRow
+import com.lurkbd.agent.ui.components.WavyTealHeader
 import com.lurkbd.agent.ui.theme.Danger
-import com.lurkbd.agent.ui.theme.GoldAccent
+import com.lurkbd.agent.ui.theme.GoldMuted
 import com.lurkbd.agent.ui.theme.InkMuted
 import com.lurkbd.agent.ui.theme.SandSurface
 import com.lurkbd.agent.ui.theme.Success
@@ -65,143 +63,99 @@ fun HisabScreen(vm: LurkViewModel) {
     var isIncome by remember { mutableStateOf(false) }
 
     Column(Modifier.fillMaxSize().background(SandSurface)) {
-        TealAppHeader(title = "হিসাব")
-        ScreenBody(Modifier.verticalScroll(rememberScrollState())) {
-            SoftCard {
-                Row(Modifier.fillMaxWidth()) {
-                    Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Box(
-                                Modifier
-                                    .size(28.dp)
-                                    .clip(CircleShape)
-                                    .background(Success.copy(alpha = 0.15f)),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Icon(Icons.Outlined.ArrowDownward, null, tint = Success, modifier = Modifier.size(16.dp))
-                            }
-                            Spacer(Modifier.size(6.dp))
-                            Text("আয়", color = Success, fontWeight = FontWeight.SemiBold)
-                        }
-                        Spacer(Modifier.height(6.dp))
-                        Text(
-                            formatTaka(hisab.income),
-                            style = MaterialTheme.typography.headlineMedium.copy(
-                                color = TealPrimary,
-                                fontWeight = FontWeight.Bold
-                            )
-                        )
-                        Text("আজ", color = InkMuted, fontSize = 12.sp)
-                    }
-                    Box(
-                        Modifier
-                            .width(1.dp)
-                            .height(64.dp)
-                            .background(InkMuted.copy(alpha = 0.15f))
-                    )
-                    Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Box(
-                                Modifier
-                                    .size(28.dp)
-                                    .clip(CircleShape)
-                                    .background(Danger.copy(alpha = 0.12f)),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Icon(Icons.Outlined.ArrowUpward, null, tint = Danger, modifier = Modifier.size(16.dp))
-                            }
-                            Spacer(Modifier.size(6.dp))
-                            Text("খরচ", color = Danger, fontWeight = FontWeight.SemiBold)
-                        }
-                        Spacer(Modifier.height(6.dp))
-                        Text(
-                            formatTaka(hisab.expense),
-                            style = MaterialTheme.typography.headlineMedium.copy(
-                                color = Danger,
-                                fontWeight = FontWeight.Bold
-                            )
-                        )
-                        Text("আজ", color = InkMuted, fontSize = 12.sp)
-                    }
-                }
-            }
-
-            Spacer(Modifier.height(8.dp))
-            SectionTitle("নতুন এন্ট্রি")
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                FilterChip(selected = !isIncome, onClick = { isIncome = false }, label = { Text("খরচ") })
-                FilterChip(selected = isIncome, onClick = { isIncome = true }, label = { Text("আয়") })
-            }
-            Spacer(Modifier.height(8.dp))
-            LurkField(amount, { amount = it.filter { ch -> ch.isDigit() || ch == '.' } }, "পরিমাণ (৳)")
-            Spacer(Modifier.height(8.dp))
-            LurkField(category, { category = it }, "ক্যাটাগরি")
-            Spacer(Modifier.height(8.dp))
-            LurkField(channel, { channel = it }, "মাধ্যম")
-            Spacer(Modifier.height(10.dp))
-            PrimaryButton("সেভ করুন") {
-                val value = amount.toDoubleOrNull() ?: return@PrimaryButton
-                if (isIncome) vm.addIncome(value, category.ifBlank { "আয়" }, channel.ifBlank { "নগদ" })
-                else vm.addExpense(value, category.ifBlank { "খরচ" }, channel.ifBlank { "নগদ" })
-                amount = ""
-            }
-
-            SectionTitle("সাম্প্রতিক লেনদেন", action = "সব দেখুন >")
-            SoftCard {
-                val list = if (hisab.transactions.isNotEmpty()) hisab.transactions else all.take(6)
-                if (list.isEmpty()) {
-                    Text("এখনো কোনো লেনদেন নেই", color = InkMuted)
-                } else {
-                    list.forEach { tx ->
-                        ListRowRich(
-                            leading = { TxIcon(tx.category) },
-                            title = tx.category,
-                            subtitle = if (tx.type == "INCOME") "আয়" else "খরচ",
-                            trailing = formatTaka(tx.amount),
-                            trailingColor = if (tx.type == "INCOME") Success else Danger,
-                            tag = tx.channel
-                        )
-                    }
-                }
-            }
-
-            if (hisab.loans.isNotEmpty()) {
-                SectionTitle("লোন")
-                SoftCard {
-                    hisab.loans.forEach { loan ->
-                        ListRowRich(
-                            leading = {
+        WavyTealHeader(title = "হিসাব", titleColor = Color.White, wavy = false)
+        ScreenPad {
+            Column(Modifier.verticalScroll(rememberScrollState())) {
+                MockCard {
+                    Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                        Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
                                 Box(
-                                    Modifier.size(42.dp).clip(CircleShape).background(GoldAccent.copy(alpha = 0.2f)),
+                                    Modifier.size(26.dp).clip(CircleShape).background(Success.copy(0.15f)),
                                     contentAlignment = Alignment.Center
                                 ) {
-                                    Icon(Icons.Outlined.AccountBalance, null, tint = GoldAccent)
+                                    Icon(Icons.Outlined.ArrowDownward, null, tint = Success, modifier = Modifier.size(14.dp))
                                 }
-                            },
-                            title = loan.party,
-                            subtitle = "পরিশোধ ${formatTaka(loan.paid)}",
-                            trailing = formatTaka(loan.principal - loan.paid),
-                            trailingColor = TealPrimary
-                        )
+                                Spacer(Modifier.width(6.dp))
+                                Text("আয়", color = Success, fontWeight = FontWeight.SemiBold)
+                            }
+                            Spacer(Modifier.height(6.dp))
+                            Text(formatTaka(hisab.income), color = TealPrimary, fontSize = 26.sp, fontWeight = FontWeight.Bold)
+                            Text("—  আজ  —", color = InkMuted, fontSize = 11.sp)
+                        }
+                        Box(Modifier.width(1.dp).height(70.dp).background(InkMuted.copy(0.18f)))
+                        Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Box(
+                                    Modifier.size(26.dp).clip(CircleShape).background(Danger.copy(0.12f)),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Icon(Icons.Outlined.ArrowUpward, null, tint = Danger, modifier = Modifier.size(14.dp))
+                                }
+                                Spacer(Modifier.width(6.dp))
+                                Text("খরচ", color = Danger, fontWeight = FontWeight.SemiBold)
+                            }
+                            Spacer(Modifier.height(6.dp))
+                            Text(formatTaka(hisab.expense), color = Danger, fontSize = 26.sp, fontWeight = FontWeight.Bold)
+                            Text("—  আজ  —", color = InkMuted, fontSize = 11.sp)
+                        }
+                    }
+                }
+
+                Spacer(Modifier.height(6.dp))
+                SectionHead("নতুন এন্ট্রি")
+                Row {
+                    FilterChip(!isIncome, { isIncome = false }, { Text("খরচ") })
+                    Spacer(Modifier.width(8.dp))
+                    FilterChip(isIncome, { isIncome = true }, { Text("আয়") })
+                }
+                Spacer(Modifier.height(6.dp))
+                LurkField(amount, { amount = it.filter { c -> c.isDigit() || c == '.' } }, "পরিমাণ (৳)")
+                Spacer(Modifier.height(6.dp))
+                LurkField(category, { category = it }, "ক্যাটাগরি")
+                Spacer(Modifier.height(6.dp))
+                LurkField(channel, { channel = it }, "মাধ্যম")
+                Spacer(Modifier.height(8.dp))
+                PrimaryButton("সেভ করুন") {
+                    val v = amount.toDoubleOrNull() ?: return@PrimaryButton
+                    if (isIncome) vm.addIncome(v, category.ifBlank { "আয়" }, channel.ifBlank { "নগদ" })
+                    else vm.addExpense(v, category.ifBlank { "খরচ" }, channel.ifBlank { "নগদ" })
+                    amount = ""
+                }
+
+                SectionHead("সাম্প্রতিক লেনদেন", action = "সব দেখুন >")
+                MockCard {
+                    val list = (if (hisab.transactions.isNotEmpty()) hisab.transactions else all).take(6)
+                    if (list.isEmpty()) {
+                        Text("এখনো কোনো লেনদেন নেই", color = InkMuted)
+                    } else {
+                        list.forEachIndexed { index, tx ->
+                            val (icon, bg) = when {
+                                tx.category.contains("বাজার") -> Icons.Outlined.ShoppingBasket to Color(0xFFE8D5C4)
+                                tx.category.contains("বেতন") || tx.type == "INCOME" -> Icons.Outlined.WorkOutline to Color(0xFFE8D5A3)
+                                tx.category.contains("রিচার্জ") || tx.category.contains("মোবাইল") -> Icons.Outlined.PhoneAndroid to Color(0xFFD6E4F0)
+                                else -> Icons.Outlined.AccountBalance to Color(0xFFE0D6F0)
+                            }
+                            val chipColor = when {
+                                tx.channel.contains("bKash", true) || tx.channel.contains("বিকাশ") -> Success
+                                tx.channel.contains("Nagad", true) || tx.channel.contains("নগদ") && tx.channel.length > 2 -> Color(0xFF7B5EA7)
+                                else -> GoldMuted
+                            }
+                            TxRow(
+                                icon = icon,
+                                iconBg = bg,
+                                title = tx.category,
+                                subtitle = if (tx.type == "INCOME") "আয়" else "খরচ",
+                                amount = formatTaka(tx.amount),
+                                amountColor = if (tx.type == "INCOME") Success else Danger,
+                                channel = tx.channel,
+                                channelColor = chipColor,
+                                showDivider = index != list.lastIndex
+                            )
+                        }
                     }
                 }
             }
         }
-    }
-}
-
-@Composable
-private fun TxIcon(category: String) {
-    val (icon, bg) = when {
-        category.contains("বাজার") || category.contains("খাবার") -> Icons.Outlined.ShoppingBasket to Color(0xFFE8D5C4)
-        category.contains("বেতন") || category.contains("আয়") -> Icons.Outlined.WorkOutline to Color(0xFFE8D5A3)
-        category.contains("রিচার্জ") || category.contains("মোবাইল") -> Icons.Outlined.PhoneAndroid to Color(0xFFD6E4F0)
-        else -> Icons.Outlined.AccountBalance to Color(0xFFE0D6F0)
-    }
-    Box(
-        Modifier.size(42.dp).clip(CircleShape).background(bg),
-        contentAlignment = Alignment.Center
-    ) {
-        Icon(icon, null, tint = TealPrimary, modifier = Modifier.size(22.dp))
     }
 }
