@@ -11,7 +11,7 @@ LurkBD Agent keeps personal, student, and small-business daily life in one place
 | Module | Job | Example voice | Alarms |
 |--------|-----|---------------|--------|
 | Home | Today summary + voice entry | আজকের হিসাব দেখাও | — |
-| টাকা | Income, expense, channels, loans | বাজারে ৩০০ টাকা খরচ | Loan installment day |
+| হিসাব | Income, expense, channels, loans | বাজারে ৩০০ টাকা খরচ | Loan installment day |
 | দোকান | Customer credit (বাকি) + stock | করিমের বাকি ৫০০ যোগ | Low-stock alert |
 | **পড়াশোনা** | Class routine, study routine, notes, scan docs, results | আগামীকাল গণিত ক্লাসের অ্যালার্ম | Class / study alarms |
 | ওষুধ | Medicine list + schedule | সকাল ৮টায় মেটফরমিন | Dose reminders |
@@ -71,7 +71,7 @@ For students: class schedule, personal study plan, subject notes, scanned docume
 See `docs/design/`:
 
 - `lurkbd-home.jpg` — Home / brand + voice CTA  
-- `lurkbd-money.jpg` — আয় / খরচ / লেনদেন  
+- `lurkbd-hisab.jpg` — হিসাব: আয় / খরচ / লেনদেন  
 - `lurkbd-shop.jpg` — বাকি + স্টক অ্যালার্ট  
 - `lurkbd-study.jpg` — পড়াশোনা: রুটিন, নোট, স্ক্যান, রেজাল্ট  
 - `lurkbd-reminders.jpg` — ওষুধ / নামাজ / রোজা  
@@ -123,7 +123,7 @@ Every voice action requires on-screen confirmation before saving.
 | Phase | Scope | Demo |
 |-------|-------|------|
 | P0 Foundation | Project, theme, nav, Room | Branded shell Home |
-| P1 টাকা | Income/expense/channels/loans | Manual entry + today summary |
+| P1 হিসাব | Income/expense/channels/loans | Manual entry + today summary |
 | P2 Voice Core | Bangla ASR → intent → confirm → save | Speak to add expense |
 | P3 দোকান | Credit ledger + stock + low-stock | Customer বাকি + stock alert |
 | **P3.5 পড়াশোনা** | Class/study routine, notes, scan, results, assignments | Today's classes + scan + result entry |
@@ -141,4 +141,4 @@ Every voice action requires on-screen confirmation before saving.
 
 ## Next step
 
-Approve design direction, then scaffold Kotlin/Compose (P0) and build Money + Voice Core (P1–P2).
+Approve design direction, then scaffold Kotlin/Compose (P0) and build হিসাব + Voice Core (P1–P2).
