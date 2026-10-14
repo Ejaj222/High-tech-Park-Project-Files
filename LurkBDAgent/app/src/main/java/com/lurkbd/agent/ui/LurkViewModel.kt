@@ -1,8 +1,12 @@
 package com.lurkbd.agent.ui
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
+import com.lurkbd.agent.LurkBDApp
 import com.lurkbd.agent.data.model.AssignmentEntity
 import com.lurkbd.agent.data.model.ClassPeriodEntity
 import com.lurkbd.agent.data.model.CustomerEntity
@@ -11,9 +15,11 @@ import com.lurkbd.agent.data.model.MedicineEntity
 import com.lurkbd.agent.data.model.ProductEntity
 import com.lurkbd.agent.data.model.ResultEntity
 import com.lurkbd.agent.data.model.StudyBlockEntity
+import com.lurkbd.agent.data.model.StudyDocumentEntity
 import com.lurkbd.agent.data.model.StudyNoteEntity
 import com.lurkbd.agent.data.model.TransactionEntity
 import com.lurkbd.agent.data.repository.LurkRepository
+import com.lurkbd.agent.util.AlarmScheduler
 import com.lurkbd.agent.voice.VoiceIntent
 import com.lurkbd.agent.voice.VoiceIntentParser
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -39,7 +45,13 @@ data class VoiceUiState(
     val message: String = ""
 )
 
-class LurkViewModel(private val repo: LurkRepository) : ViewModel() {
+class LurkViewModel(
+    app: Application,
+    private val repo: LurkRepository,
+    private val alarms: AlarmScheduler
+) : AndroidViewModel(app) {
+    private val alarmPrefs = app.getSharedPreferences("lurkbd_alarms", Application.MODE_PRIVATE)
+
     val hisab: StateFlow<HisabSummary> = combine(
         repo.todayTransactions(),
         repo.loans()
@@ -73,6 +85,9 @@ class LurkViewModel(private val repo: LurkRepository) : ViewModel() {
     val assignments: StateFlow<List<AssignmentEntity>> =
         repo.assignments().stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
+    val studyDocuments: StateFlow<List<StudyDocumentEntity>> =
+        repo.studyDocuments().stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+
     val results: StateFlow<List<ResultEntity>> =
         repo.results().stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
@@ -91,7 +106,23 @@ class LurkViewModel(private val repo: LurkRepository) : ViewModel() {
             "এশা" to "19:20"
         )
     )
-    val ramadanAlarms = MutableStateFlow("সেহেরি 04:20 · ইফতার 17:55" to true)
+    val ramadanAlarms = MutableStateFlow(
+        (alarmPrefs.getString("sehri_iftar_label", "সেহেরি 04:20 · ইফতার 17:55")
+            ?: "সেহেরি 04:20 · ইফতার 17:55") to alarmPrefs.getBoolean("ramadan_enabled", true)
+    )
+    val prayerEnabled = MutableStateFlow(alarmPrefs.getBoolean("prayer_enabled", true))
+    val scanMessage = MutableStateFlow("")
+
+    init {
+        if (prayerEnabled.value) {
+            prayerAlarms.value.forEach { (n, t) -> alarms.schedulePrayer(n, t, true) }
+        }
+        alarms.scheduleRamadan(
+            alarmPrefs.getString("sehri", "04:20") ?: "04:20",
+            alarmPrefs.getString("iftar", "17:55") ?: "17:55",
+            ramadanAlarms.value.second
+        )
+    }
 
     fun addExpense(amount: Double, category: String, channel: String) = viewModelScope.launch {
         repo.addTransaction("EXPENSE", amount, category, channel)
@@ -111,7 +142,8 @@ class LurkViewModel(private val repo: LurkRepository) : ViewModel() {
 
     fun addClass(subject: String, startMinutes: Int) = viewModelScope.launch {
         val day = Calendar.getInstance().get(Calendar.DAY_OF_WEEK)
-        repo.addClass(subject, day, startMinutes, startMinutes + 60)
+        val period = repo.addClass(subject, day, startMinutes, startMinutes + 60)
+        alarms.scheduleClass(period)
     }
 
     fun addStudyBlock(subject: String, startMinutes: Int) = viewModelScope.launch {
@@ -132,16 +164,47 @@ class LurkViewModel(private val repo: LurkRepository) : ViewModel() {
         repo.addAssignment(subject, title, System.currentTimeMillis() + 86_400_000 * 3)
     }
 
+    fun saveScannedDocument(subject: String, title: String, fileUri: String, mimeType: String = "image/jpeg") =
+        viewModelScope.launch {
+            repo.addStudyDocument(subject, title, fileUri, mimeType)
+            repo.addAssignment(
+                subject = subject,
+                title = title,
+                dueAt = System.currentTimeMillis() + 86_400_000 * 7,
+                documentUri = fileUri
+            )
+            scanMessage.value = "স্ক্যান সেভ হয়েছে"
+        }
+
     fun addMedicine(name: String, timeMinutes: Int) = viewModelScope.launch {
-        repo.addMedicine(name, timeMinutes)
+        val med = repo.addMedicine(name, timeMinutes)
+        alarms.scheduleMedicine(med)
     }
 
     fun toggleMedicine(item: MedicineEntity, active: Boolean) = viewModelScope.launch {
-        repo.setMedicineActive(item, active)
+        val updated = repo.setMedicineActive(item, active)
+        alarms.scheduleMedicine(updated)
     }
 
     fun toggleClassAlarm(item: ClassPeriodEntity, enabled: Boolean) = viewModelScope.launch {
-        repo.setClassAlarm(item, enabled)
+        val updated = repo.setClassAlarm(item, enabled)
+        alarms.scheduleClass(updated)
+    }
+
+    fun setPrayerAlarmsEnabled(enabled: Boolean) {
+        prayerEnabled.value = enabled
+        alarmPrefs.edit().putBoolean("prayer_enabled", enabled).apply()
+        prayerAlarms.value.forEach { (n, t) -> alarms.schedulePrayer(n, t, enabled) }
+    }
+
+    fun setRamadanEnabled(enabled: Boolean) {
+        ramadanAlarms.value = ramadanAlarms.value.first to enabled
+        alarmPrefs.edit().putBoolean("ramadan_enabled", enabled).apply()
+        alarms.scheduleRamadan(
+            alarmPrefs.getString("sehri", "04:20") ?: "04:20",
+            alarmPrefs.getString("iftar", "17:55") ?: "17:55",
+            enabled
+        )
     }
 
     fun openVoice() {
@@ -178,13 +241,19 @@ class LurkViewModel(private val repo: LurkRepository) : ViewModel() {
             )
             is VoiceIntent.CreditAdd -> repo.addCustomerCredit(intent.name, intent.amount)
             is VoiceIntent.StockSet -> repo.setStock(intent.name, intent.qty)
-            is VoiceIntent.MedicineAlarm -> repo.addMedicine(intent.name, intent.timeMinutes)
-            is VoiceIntent.ClassAdd -> repo.addClass(
-                intent.subject,
-                intent.dayOfWeek,
-                intent.startMinutes,
-                intent.startMinutes + 60
-            )
+            is VoiceIntent.MedicineAlarm -> {
+                val med = repo.addMedicine(intent.name, intent.timeMinutes)
+                alarms.scheduleMedicine(med)
+            }
+            is VoiceIntent.ClassAdd -> {
+                val period = repo.addClass(
+                    intent.subject,
+                    intent.dayOfWeek,
+                    intent.startMinutes,
+                    intent.startMinutes + 60
+                )
+                alarms.scheduleClass(period)
+            }
             is VoiceIntent.StudyRoutine -> {
                 val day = Calendar.getInstance().get(Calendar.DAY_OF_WEEK)
                 repo.addStudyBlock(intent.subject, day, intent.timeMinutes, intent.timeMinutes + 60)
@@ -202,12 +271,14 @@ class LurkViewModel(private val repo: LurkRepository) : ViewModel() {
     }
 
     companion object {
-        fun factory(repo: LurkRepository): ViewModelProvider.Factory =
-            object : ViewModelProvider.Factory {
-                @Suppress("UNCHECKED_CAST")
-                override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    return LurkViewModel(repo) as T
-                }
+        fun factory(app: LurkBDApp): ViewModelProvider.Factory = viewModelFactory {
+            initializer {
+                LurkViewModel(
+                    app = app,
+                    repo = app.repository,
+                    alarms = AlarmScheduler(app)
+                )
             }
+        }
     }
 }

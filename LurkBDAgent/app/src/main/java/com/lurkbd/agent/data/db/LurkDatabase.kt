@@ -12,6 +12,7 @@ import com.lurkbd.agent.data.model.MedicineEntity
 import com.lurkbd.agent.data.model.ProductEntity
 import com.lurkbd.agent.data.model.ResultEntity
 import com.lurkbd.agent.data.model.StudyBlockEntity
+import com.lurkbd.agent.data.model.StudyDocumentEntity
 import com.lurkbd.agent.data.model.StudyNoteEntity
 import com.lurkbd.agent.data.model.TransactionEntity
 import java.util.Calendar
@@ -27,9 +28,10 @@ import java.util.Calendar
         StudyNoteEntity::class,
         AssignmentEntity::class,
         ResultEntity::class,
-        MedicineEntity::class
+        MedicineEntity::class,
+        StudyDocumentEntity::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class LurkDatabase : RoomDatabase() {
@@ -43,6 +45,7 @@ abstract class LurkDatabase : RoomDatabase() {
     abstract fun assignments(): AssignmentDao
     abstract fun results(): ResultDao
     abstract fun medicines(): MedicineDao
+    abstract fun studyDocuments(): StudyDocumentDao
 
     companion object {
         @Volatile
@@ -54,7 +57,8 @@ abstract class LurkDatabase : RoomDatabase() {
                     context.applicationContext,
                     LurkDatabase::class.java,
                     "lurkbd.db"
-                ).build().also { instance = it }
+                ).fallbackToDestructiveMigration()
+                    .build().also { instance = it }
             }
         }
     }

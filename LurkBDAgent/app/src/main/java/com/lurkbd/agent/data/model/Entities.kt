@@ -108,6 +108,16 @@ data class MedicineEntity(
     val active: Boolean = true
 )
 
+@Entity(tableName = "study_documents")
+data class StudyDocumentEntity(
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    val subjectName: String,
+    val title: String,
+    val fileUri: String,
+    val mimeType: String = "image/jpeg",
+    val createdAt: Long = System.currentTimeMillis()
+)
+
 @Entity(tableName = "app_settings")
 data class AppSettingEntity(
     @PrimaryKey val key: String,

@@ -18,6 +18,11 @@ gen/
 out/
 release/
 *.log
+keystore.properties
+keystore/*.jks
+keystore/*.keystore
+*.jks
+local.properties
 LurkBDAgent/local.properties
 LurkBDAgent/.gradle/
 LurkBDAgent/**/build/

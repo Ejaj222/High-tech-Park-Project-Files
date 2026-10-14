@@ -46,6 +46,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.lurkbd.agent.scan.rememberDocumentScanLauncher
 import com.lurkbd.agent.ui.LurkViewModel
 import com.lurkbd.agent.ui.components.GoldOutlineButton
 import com.lurkbd.agent.ui.components.IconBadge
@@ -71,6 +72,7 @@ fun StudyScreen(vm: LurkViewModel) {
     val notes by vm.studyNotes.collectAsState()
     val results by vm.results.collectAsState()
     val assignments by vm.assignments.collectAsState()
+    val documents by vm.studyDocuments.collectAsState()
     var tab by remember { mutableIntStateOf(0) }
     var subject by remember { mutableStateOf("গণিত") }
     var title by remember { mutableStateOf("") }
@@ -78,6 +80,9 @@ fun StudyScreen(vm: LurkViewModel) {
     var score by remember { mutableStateOf("") }
     var total by remember { mutableStateOf("20") }
     var timeText by remember { mutableStateOf("9:00") }
+    val launchScan = rememberDocumentScanLauncher(subject = subject.ifBlank { "পড়াশোনা" }) { uri, mime, scanTitle ->
+        vm.saveScannedDocument(subject.ifBlank { "পড়াশোনা" }, scanTitle, uri, mime)
+    }
 
     Column(Modifier.fillMaxSize().background(SandSurface)) {
         WavyTealHeader(title = "পড়াশোনা", titleColor = Color.White, wavy = true)
@@ -153,7 +158,7 @@ fun StudyScreen(vm: LurkViewModel) {
                             }
                         }
                         Spacer(Modifier.height(14.dp))
-                        GoldOutlineButton("স্ক্যান করে রাখুন", Icons.Outlined.DocumentScanner) {}
+                        GoldOutlineButton("স্ক্যান করে রাখুন", Icons.Outlined.DocumentScanner) { launchScan() }
                     }
                     1 -> {
                         SectionHead("সাবজেক্ট নোট", leadingIcon = Icons.Outlined.Description)
@@ -179,14 +184,30 @@ fun StudyScreen(vm: LurkViewModel) {
                     }
                     2 -> {
                         SectionHead("ডকুমেন্ট / অ্যাসাইনমেন্ট", leadingIcon = Icons.Outlined.Folder)
-                        GoldOutlineButton("স্ক্যান করে রাখুন", Icons.Outlined.DocumentScanner) {}
+                        GoldOutlineButton("স্ক্যান করে রাখুন", Icons.Outlined.DocumentScanner) { launchScan() }
                         Spacer(Modifier.height(10.dp))
+                        if (documents.isNotEmpty()) {
+                            Text("স্ক্যান করা ডকুমেন্ট", color = TealPrimary, fontWeight = FontWeight.SemiBold)
+                            documents.take(8).forEach { doc ->
+                                Spacer(Modifier.height(8.dp))
+                                MockCard {
+                                    Text(doc.title, fontWeight = FontWeight.SemiBold, color = TealPrimary)
+                                    Text(
+                                        "${doc.subjectName} · ${doc.mimeType}",
+                                        color = InkMuted,
+                                        fontSize = 13.sp
+                                    )
+                                }
+                            }
+                            Spacer(Modifier.height(10.dp))
+                        }
                         assignments.forEach { a ->
                             Spacer(Modifier.height(8.dp))
                             MockCard(highlight = !a.done) {
                                 Text(a.title, fontWeight = FontWeight.SemiBold, color = TealPrimary)
                                 Text(
-                                    "${a.subjectName} · ${SimpleDateFormat("dd MMM", Locale.US).format(Date(a.dueAt))}",
+                                    "${a.subjectName} · ${SimpleDateFormat("dd MMM", Locale.US).format(Date(a.dueAt))}" +
+                                        if (a.documentUri.isNotBlank()) " · স্ক্যান আছে" else "",
                                     color = InkMuted,
                                     fontSize = 13.sp
                                 )

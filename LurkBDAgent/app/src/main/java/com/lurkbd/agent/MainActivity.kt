@@ -1,9 +1,13 @@
 package com.lurkbd.agent
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -17,6 +21,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -39,13 +44,17 @@ import com.lurkbd.agent.ui.theme.TealDark
 import com.lurkbd.agent.ui.theme.TealPrimary
 
 class MainActivity : ComponentActivity() {
+    private val permissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        requestRuntimePermissions()
         enableEdgeToEdge()
         val app = application as LurkBDApp
         setContent {
             LurkBDTheme {
-                val vm: LurkViewModel = viewModel(factory = LurkViewModel.factory(app.repository))
+                val vm: LurkViewModel = viewModel(factory = LurkViewModel.factory(app))
                 val navController = rememberNavController()
                 val backStack by navController.currentBackStackEntryAsState()
                 val current = backStack?.destination?.route
@@ -103,5 +112,27 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    private fun requestRuntimePermissions() {
+        val needed = buildList {
+            if (Build.VERSION.SDK_INT >= 33 &&
+                ContextCompat.checkSelfPermission(this@MainActivity, Manifest.permission.POST_NOTIFICATIONS) !=
+                PackageManager.PERMISSION_GRANTED
+            ) {
+                add(Manifest.permission.POST_NOTIFICATIONS)
+            }
+            if (ContextCompat.checkSelfPermission(this@MainActivity, Manifest.permission.RECORD_AUDIO) !=
+                PackageManager.PERMISSION_GRANTED
+            ) {
+                add(Manifest.permission.RECORD_AUDIO)
+            }
+            if (ContextCompat.checkSelfPermission(this@MainActivity, Manifest.permission.CAMERA) !=
+                PackageManager.PERMISSION_GRANTED
+            ) {
+                add(Manifest.permission.CAMERA)
+            }
+        }
+        if (needed.isNotEmpty()) permissionLauncher.launch(needed.toTypedArray())
     }
 }

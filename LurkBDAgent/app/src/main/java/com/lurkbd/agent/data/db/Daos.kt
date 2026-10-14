@@ -13,6 +13,7 @@ import com.lurkbd.agent.data.model.MedicineEntity
 import com.lurkbd.agent.data.model.ProductEntity
 import com.lurkbd.agent.data.model.ResultEntity
 import com.lurkbd.agent.data.model.StudyBlockEntity
+import com.lurkbd.agent.data.model.StudyDocumentEntity
 import com.lurkbd.agent.data.model.StudyNoteEntity
 import com.lurkbd.agent.data.model.TransactionEntity
 import kotlinx.coroutines.flow.Flow
@@ -136,9 +137,24 @@ interface MedicineDao {
     @Query("SELECT * FROM medicines ORDER BY timeMinutes ASC")
     fun observeAll(): Flow<List<MedicineEntity>>
 
+    @Query("SELECT * FROM medicines WHERE id = :id LIMIT 1")
+    suspend fun getById(id: Long): MedicineEntity?
+
     @Insert
     suspend fun insert(item: MedicineEntity): Long
 
     @Update
     suspend fun update(item: MedicineEntity)
+}
+
+@Dao
+interface StudyDocumentDao {
+    @Query("SELECT * FROM study_documents ORDER BY createdAt DESC")
+    fun observeAll(): Flow<List<StudyDocumentEntity>>
+
+    @Insert
+    suspend fun insert(item: StudyDocumentEntity): Long
+
+    @Query("DELETE FROM study_documents WHERE id = :id")
+    suspend fun delete(id: Long)
 }

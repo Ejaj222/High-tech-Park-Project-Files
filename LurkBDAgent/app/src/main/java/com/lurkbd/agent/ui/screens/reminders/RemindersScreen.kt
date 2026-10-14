@@ -116,7 +116,20 @@ fun RemindersScreen(vm: LurkViewModel) {
 
             Spacer(Modifier.height(14.dp))
             GoldPanel {
+                val prayerOn by vm.prayerEnabled.collectAsState()
                 PanelHead(Icons.Outlined.Place, "নামাজ", "পাঁচ ওয়াক্ত নামাজ (ঢাকা)")
+                Row(
+                    Modifier.fillMaxWidth().padding(bottom = 6.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text("অ্যালার্ম চালু", color = GoldSoft)
+                    Switch(
+                        checked = prayerOn,
+                        onCheckedChange = { vm.setPrayerAlarmsEnabled(it) },
+                        colors = SwitchDefaults.colors(checkedTrackColor = GoldAccent, checkedThumbColor = Color.White)
+                    )
+                }
                 prayers.forEach { (waqt, time) ->
                     Row(
                         Modifier.fillMaxWidth().padding(vertical = 8.dp),
@@ -149,7 +162,7 @@ fun RemindersScreen(vm: LurkViewModel) {
                         checked = ramadanOn,
                         onCheckedChange = {
                             ramadanOn = it
-                            vm.ramadanAlarms.value = ramadan.first to it
+                            vm.setRamadanEnabled(it)
                         },
                         colors = SwitchDefaults.colors(checkedTrackColor = GoldAccent, checkedThumbColor = Color.White)
                     )
