@@ -15,6 +15,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
@@ -34,6 +35,7 @@ import com.lurkbd.agent.ui.theme.GoldAccent
 import com.lurkbd.agent.ui.theme.InkMuted
 import com.lurkbd.agent.ui.theme.LurkBDTheme
 import com.lurkbd.agent.ui.theme.SandSurface
+import com.lurkbd.agent.ui.theme.TealDark
 import com.lurkbd.agent.ui.theme.TealPrimary
 
 class MainActivity : ComponentActivity() {
@@ -47,15 +49,20 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 val backStack by navController.currentBackStackEntryAsState()
                 val current = backStack?.destination?.route
+                val immersive = current == LurkDest.Home.route || current == LurkDest.Reminders.route
 
                 Box(Modifier.fillMaxSize()) {
                     Scaffold(
-                        containerColor = SandSurface,
+                        containerColor = if (immersive) TealDark else SandSurface,
                         bottomBar = {
-                            NavigationBar(containerColor = SandSurface, tonalElevation = 0.dp) {
+                            NavigationBar(
+                                containerColor = if (immersive) TealPrimary else SandSurface,
+                                tonalElevation = 0.dp
+                            ) {
                                 LurkDest.entries.forEach { dest ->
+                                    val selected = current == dest.route
                                     NavigationBarItem(
-                                        selected = current == dest.route,
+                                        selected = selected,
                                         onClick = {
                                             navController.navigate(dest.route) {
                                                 popUpTo(LurkDest.Home.route) { saveState = true }
@@ -66,11 +73,23 @@ class MainActivity : ComponentActivity() {
                                         icon = { Icon(dest.icon, contentDescription = dest.label) },
                                         label = { Text(dest.label) },
                                         colors = NavigationBarItemDefaults.colors(
-                                            selectedIconColor = TealPrimary,
-                                            selectedTextColor = TealPrimary,
-                                            indicatorColor = GoldAccent.copy(alpha = 0.25f),
-                                            unselectedIconColor = InkMuted,
-                                            unselectedTextColor = InkMuted
+                                            selectedIconColor = if (immersive) GoldAccent else TealPrimary,
+                                            selectedTextColor = if (immersive) GoldAccent else TealPrimary,
+                                            indicatorColor = if (immersive) {
+                                                GoldAccent.copy(alpha = 0.18f)
+                                            } else {
+                                                GoldAccent.copy(alpha = 0.22f)
+                                            },
+                                            unselectedIconColor = if (immersive) {
+                                                Color.White.copy(alpha = 0.7f)
+                                            } else {
+                                                InkMuted
+                                            },
+                                            unselectedTextColor = if (immersive) {
+                                                Color.White.copy(alpha = 0.7f)
+                                            } else {
+                                                InkMuted
+                                            }
                                         )
                                     )
                                 }
