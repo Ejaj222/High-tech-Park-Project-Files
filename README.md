@@ -1,11 +1,15 @@
 # LurkBD Agent
 
-Voice-first Android companion for daily money, shop credit & stock, medicine reminders, five daily prayers, and Sehri/Iftar alarms — primarily in Bangla.
+Voice-first Android companion for daily money, shop credit & stock, **study (পড়াশোনা)**, medicine reminders, five daily prayers, and Sehri/Iftar alarms — primarily in Bangla.
 
 ## Docs
 
 - **[Full product plan](docs/LURKBD_AGENT_PLAN.md)** — modules, voice architecture, tech stack, delivery phases  
-- **[Design mockups](docs/design/)** — Home, Money, Shop, Reminders, Voice  
+- **[Design mockups](docs/design/)** — Home, Money, Shop, Study, Reminders, Voice  
+
+## Modules (short)
+
+টাকা · দোকান · **পড়াশোনা** (ক্লাস/পড়ার রুটিন, নোট, স্ক্যান, রেজাল্ট, অ্যাসাইনমেন্ট) · ওষুধ · ইবাদত · Voice
 
 ## Design direction
 
