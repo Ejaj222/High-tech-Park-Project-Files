@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>LurkBD Agent Preview</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Libre+Baskerville:wght@700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --teal: #0B4F4A;
+      --teal-dark: #083F3B;
+      --sand: #F7F3EC;
+      --sand-card: #FFFBF5;
+      --gold: #C4A35A;
+      --ink: #1A2422;
+      --muted: #5C6B67;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Hind Siliguri", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(ellipse at 20% 0%, #d7ebe7 0%, transparent 50%),
+        radial-gradient(ellipse at 90% 20%, #efe4c8 0%, transparent 45%),
+        linear-gradient(160deg, #e8f0ee, var(--sand));
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+    .wrap { display: grid; gap: 18px; justify-items: center; }
+    .brand-title {
+      font-family: "Libre Baskerville", serif;
+      font-size: 28px;
+      color: var(--teal);
+      margin: 0;
+    }
+    .sub { color: var(--muted); margin: 0; }
+    .phone {
+      width: min(390px, 100%);
+      height: 760px;
+      border-radius: 36px;
+      background: var(--sand);
+      border: 3px solid #1a2e2b;
+      box-shadow: 0 30px 60px rgba(11, 79, 74, 0.25);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+    .notch {
+      height: 28px;
+      display: flex;
+      justify-content: center;
+      align-items: end;
+      padding-bottom: 4px;
+      background: var(--teal);
+      color: var(--sand);
+      font-size: 12px;
+    }
+    .screen { flex: 1; overflow: auto; padding: 20px 20px 100px; }
+    .tab { display: none; }
+    .tab.active { display: block; }
+    h1 {
+      font-family: "Libre Baskerville", serif;
+      color: var(--teal);
+      font-size: 30px;
+      margin: 0 0 6px;
+    }
+    .muted { color: var(--muted); margin: 0 0 16px; }
+    .hero {
+      background: linear-gradient(165deg, var(--teal), var(--teal-dark));
+      color: var(--sand);
+      border-radius: 20px;
+      padding: 22px;
+    }
+    .hero h2 { margin: 0 0 8px; font-family: "Libre Baskerville", serif; font-size: 24px; }
+    .hero p { margin: 0 0 16px; color: #e8d5a3; }
+    button.cta, .btn {
+      border: 0;
+      background: var(--sand);
+      color: var(--teal);
+      font: inherit;
+      font-weight: 600;
+      padding: 12px 16px;
+      border-radius: 14px;
+      width: 100%;
+      cursor: pointer;
+    }
+    .btn.primary { background: var(--teal); color: var(--sand); }
+    .row { display: flex; justify-content: space-between; gap: 12px; margin: 10px 0; }
+    .stat span { display: block; color: var(--muted); font-size: 13px; }
+    .stat strong { font-size: 24px; color: var(--teal); }
+    .stat.income strong { color: #2F7D4A; }
+    .list-item { padding: 10px 0; border-bottom: 1px solid rgba(11,79,74,.08); display: flex; justify-content: space-between; gap: 8px; }
+    .list-item small { color: var(--muted); display: block; }
+    .gold { color: var(--gold); font-weight: 600; }
+    .field {
+      width: 100%;
+      margin: 8px 0;
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(92,107,103,.35);
+      font: inherit;
+      background: var(--sand-card);
+    }
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 14px; }
+    .chip {
+      border: 1px solid rgba(11,79,74,.2);
+      background: transparent;
+      border-radius: 999px;
+      padding: 6px 12px;
+      font: inherit;
+      cursor: pointer;
+    }
+    .chip.on { background: rgba(196,163,90,.25); border-color: var(--gold); }
+    nav {
+      position: absolute; left: 0; right: 0; bottom: 0;
+      height: 72px;
+      background: var(--sand);
+      border-top: 1px solid rgba(11,79,74,.1);
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+    }
+    nav button {
+      border: 0; background: transparent; font: inherit; font-size: 12px; color: var(--muted); cursor: pointer;
+    }
+    nav button.on { color: var(--teal); font-weight: 700; }
+    .fab {
+      position: absolute; right: 18px; bottom: 84px;
+      width: 58px; height: 58px; border-radius: 50%;
+      border: 0; background: var(--teal); color: var(--sand);
+      font-size: 22px; cursor: pointer;
+      box-shadow: 0 8px 20px rgba(11,79,74,.35);
+    }
+    .fab::after {
+      content: ""; position: absolute; right: 8px; bottom: 8px;
+      width: 10px; height: 10px; border-radius: 50%; background: var(--gold);
+    }
+    .overlay {
+      position: absolute; inset: 0; background: rgba(0,0,0,.55);
+      display: none; place-items: center; padding: 20px;
+    }
+    .overlay.show { display: grid; }
+    .sheet {
+      background: var(--sand); border-radius: 24px; padding: 22px; width: 100%;
+      text-align: center;
+    }
+    .mic {
+      width: 92px; height: 92px; border-radius: 50%; background: var(--teal); color: white;
+      border: 0; font-size: 34px; cursor: pointer; position: relative;
+    }
+    .sample {
+      display: block; width: 100%; text-align: left; margin: 6px 0; padding: 8px 10px;
+      border-radius: 10px; border: 1px solid rgba(11,79,74,.15); background: var(--sand-card);
+      font: inherit; cursor: pointer;
+    }
+    .preview { color: var(--teal); font-weight: 600; min-height: 24px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1 class="brand-title">LurkBD Agent</h1>
+    <p class="sub">Interactive UI preview · Android APK is in docs/releases</p>
+    <div class="phone" id="phone">
+      <div class="notch">LurkBD</div>
+      <div class="screen">
+        <section class="tab active" id="home">
+          <h1>LurkBD</h1>
+          <p class="muted">Agent</p>
+          <div class="hero">
+            <h2>আজকের হিসাব</h2>
+            <p>দৈনন্দিন টাকা, দোকান, পড়াশোনা ও রিমাইন্ডার — কণ্ঠে বলুন।</p>
+            <button class="cta" onclick="openVoice()">ভয়েস দিয়ে বলুন</button>
+          </div>
+          <div style="margin-top:20px">
+            <strong>আজ</strong>
+            <p id="homeSummary">আয় ৳12,450 · খরচ ৳350</p>
+            <p class="muted">ক্লাস: গণিত, ইংরেজি · ১টি পণ্যের স্টক কম</p>
+          </div>
+        </section>
+
+        <section class="tab" id="hisab">
+          <h1>হিসাব</h1>
+          <p class="muted">আজকের আয় ও খরচ</p>
+          <div class="row">
+            <div class="stat income"><span>আয়</span><strong id="income">৳12,450</strong></div>
+            <div class="stat"><span>খরচ</span><strong id="expense">৳350</strong></div>
+          </div>
+          <div class="chips">
+            <button class="chip on" id="chipExpense" onclick="setType(false)">খরচ</button>
+            <button class="chip" id="chipIncome" onclick="setType(true)">আয়</button>
+          </div>
+          <input class="field" id="amount" placeholder="পরিমাণ (৳)" />
+          <input class="field" id="category" value="বাজার" />
+          <input class="field" id="channel" value="নগদ" />
+          <button class="btn primary" onclick="saveTx()">সেভ করুন</button>
+          <div id="txList" style="margin-top:16px"></div>
+        </section>
+
+        <section class="tab" id="shop">
+          <h1>দোকান</h1>
+          <p class="muted">বাকি খাতা ও স্টক</p>
+          <h3>বাকি</h3>
+          <div id="customers"></div>
+          <h3>স্টক</h3>
+          <div id="products"></div>
+        </section>
+
+        <section class="tab" id="study">
+          <h1>পড়াশোনা</h1>
+          <p class="muted">রুটিন, নোট, রেজাল্ট</p>
+          <div class="chips">
+            <button class="chip on">রুটিন</button>
+            <button class="chip">নোট</button>
+            <button class="chip">রেজাল্ট</button>
+          </div>
+          <div class="list-item"><div>গণিত<small>আজ · 09:00–10:00</small></div><span class="gold">অ্যালার্ম</span></div>
+          <div class="list-item"><div>ইংরেজি<small>আজ · 10:30–11:30</small></div><span class="gold">অ্যালার্ম</span></div>
+          <div class="list-item"><div>গণিত — অধ্যায় ৫<small>সূত্র ও উদাহরণ নোট</small></div></div>
+          <div class="list-item"><div>পদার্থ · ক্লাস টেস্ট<small>রেজাল্ট</small></div><strong>18/20</strong></div>
+        </section>
+
+        <section class="tab" id="reminders">
+          <h1>রিমাইন্ডার</h1>
+          <p class="muted">ওষুধ · নামাজ · রোজা</p>
+          <div class="list-item"><div>Metformin<small>০৮:০০</small></div><span class="gold">ON</span></div>
+          <div class="list-item"><div>Vitamin D<small>২২:০০</small></div><span class="gold">ON</span></div>
+          <div class="list-item"><div>ফজর · 05:05</div><span class="gold">ON</span></div>
+          <div class="list-item"><div>মাগরিব · 17:55</div><span class="gold">ON</span></div>
+          <div class="list-item"><div>সেহেরি 04:20 · ইফতার 17:55</div><span class="gold">ON</span></div>
+        </section>
+      </div>
+      <button class="fab" onclick="openVoice()" title="Voice">🎙️</button>
+      <nav>
+        <button class="on" data-tab="home" onclick="showTab('home', this)">হোম</button>
+        <button data-tab="hisab" onclick="showTab('hisab', this)">হিসাব</button>
+        <button data-tab="shop" onclick="showTab('shop', this)">দোকান</button>
+        <button data-tab="study" onclick="showTab('study', this)">পড়াশোনা</button>
+        <button data-tab="reminders" onclick="showTab('reminders', this)">রিমাইন্ডার</button>
+      </nav>
+      <div class="overlay" id="voice">
+        <div class="sheet">
+          <div style="color:var(--teal);font-weight:600">LurkBD</div>
+          <button class="mic" onclick="listenDemo()">🎙️</button>
+          <h2 id="voiceMsg">শুনছি…</h2>
+          <div id="transcript" class="muted"></div>
+          <div id="preview" class="preview"></div>
+          <div style="margin-top:10px;text-align:left">
+            <button class="sample" onclick="useSample(this.textContent)">আজ বাজারে তিনশ টাকা খরচ</button>
+            <button class="sample" onclick="useSample(this.textContent)">করিম ভাইয়ের বাকি পাঁচশ যোগ করো</button>
+            <button class="sample" onclick="useSample(this.textContent)">সাবান স্টক পাঁচ</button>
+          </div>
+          <button class="btn primary" style="margin-top:10px" onclick="confirmVoice()">নিশ্চিত করে সেভ</button>
+          <button class="btn" style="margin-top:8px" onclick="closeVoice()">বন্ধ</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    let income = 12450, expense = 350, isIncome = false;
+    let pending = null;
+    const txs = [
+      { title: "বাজার", sub: "নগদ · খরচ", amount: 300 },
+      { title: "মোবাইল রিচার্জ", sub: "bKash · খরচ", amount: 50 },
+      { title: "বেতন", sub: "ব্যাংক · আয়", amount: 12450 }
+    ];
+    const customers = [
+      { name: "করিম ভাই", bal: 2500 },
+      { name: "রহিমা বেগম", bal: 850 }
+    ];
+    const products = [
+      { name: "চাল", qty: "40 কেজি" },
+      { name: "তেল", qty: "12 লিটার" },
+      { name: "সাবান", qty: "3 প্যাকেট", low: true }
+    ];
+
+    function money(n){ return "৳" + Math.round(n).toLocaleString("en-US"); }
+    function render(){
+      document.getElementById("income").textContent = money(income);
+      document.getElementById("expense").textContent = money(expense);
+      document.getElementById("homeSummary").textContent = `আয় ${money(income)} · খরচ ${money(expense)}`;
+      document.getElementById("txList").innerHTML = txs.map(t =>
+        `<div class="list-item"><div>${t.title}<small>${t.sub}</small></div><strong>${money(t.amount)}</strong></div>`
+      ).join("");
+      document.getElementById("customers").innerHTML = customers.map(c =>
+        `<div class="list-item"><div>${c.name}<small>ক্রেতা</small></div><span class="gold">${money(c.bal)}</span></div>`
+      ).join("");
+      document.getElementById("products").innerHTML = products.map(p =>
+        `<div class="list-item"><div>${p.name}<small>${p.low ? "কম স্টক — অ্যালার্ট" : "স্টক"}</small></div><strong class="${p.low?"gold":""}">${p.qty}</strong></div>`
+      ).join("");
+    }
+    function showTab(id, btn){
+      document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+      document.getElementById(id).classList.add("active");
+      document.querySelectorAll("nav button").forEach(b => b.classList.remove("on"));
+      btn.classList.add("on");
+    }
+    function setType(v){
+      isIncome = v;
+      document.getElementById("chipIncome").classList.toggle("on", v);
+      document.getElementById("chipExpense").classList.toggle("on", !v);
+    }
+    function saveTx(){
+      const amount = Number(document.getElementById("amount").value || 0);
+      if(!amount) return;
+      const category = document.getElementById("category").value || (isIncome ? "আয়" : "খরচ");
+      const channel = document.getElementById("channel").value || "নগদ";
+      if(isIncome) income += amount; else expense += amount;
+      txs.unshift({ title: category, sub: `${channel} · ${isIncome?"আয়":"খরচ"}`, amount });
+      document.getElementById("amount").value = "";
+      render();
+    }
+    function openVoice(){ document.getElementById("voice").classList.add("show"); }
+    function closeVoice(){ document.getElementById("voice").classList.remove("show"); pending=null; }
+    function listenDemo(){ document.getElementById("voiceMsg").textContent = "শুনছি…"; }
+    function useSample(text){
+      document.getElementById("transcript").textContent = "“" + text + "”";
+      if(text.includes("খরচ")) pending = { type:"expense", amount:300, category:"বাজার", label:"খরচ ৳300 · বাজার · নগদ" };
+      else if(text.includes("বাকি")) pending = { type:"credit", amount:500, name:"করিম ভাই", label:"করিম ভাই এর বাকি +৳500" };
+      else if(text.includes("স্টক")) pending = { type:"stock", qty:5, label:"সাবান স্টক = 5" };
+      document.getElementById("preview").textContent = pending ? pending.label : "";
+      document.getElementById("voiceMsg").textContent = "নিশ্চিত করুন";
+    }
+    function confirmVoice(){
+      if(!pending) return;
+      if(pending.type==="expense"){ expense += pending.amount; txs.unshift({title:pending.category, sub:"নগদ · খরচ", amount:pending.amount}); }
+      if(pending.type==="credit"){ const c=customers.find(x=>x.name.includes("করিম")); if(c) c.bal += pending.amount; }
+      if(pending.type==="stock"){ const p=products.find(x=>x.name==="সাবান"); if(p){ p.qty = pending.qty + " প্যাকেট"; p.low = pending.qty <= 5; } }
+      render(); closeVoice(); showTab("hisab", document.querySelector('[data-tab="hisab"]'));
+    }
+    render();
+  </script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">LurkBD Agent</string>
+    <string name="nav_home">হোম</string>
+    <string name="nav_hisab">হিসাব</string>
+    <string name="nav_shop">দোকান</string>
+    <string name="nav_study">পড়াশোনা</string>
+    <string name="nav_reminders">রিমাইন্ডার</string>
+    <string name="voice_listening">শুনছি…</string>
+    <string name="voice_cta">ভয়েস দিয়ে বলুন</string>
+</resources>
