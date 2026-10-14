@@ -1,6 +1,6 @@
 # LurkBD Agent — Full Product Plan
 
-**Voice-first Android app** for Bangladesh: daily money, shop credit & stock, study/class routines, medicine, prayer, and Ramadan alarms — controlled mostly by Bangla speech.
+**Voice-first Android app** for Bangladesh: daily হিসাব (accounts), shop credit & stock, study/class routines, medicine, prayer, and Ramadan alarms — controlled mostly by Bangla speech.
 
 ## Vision
 
