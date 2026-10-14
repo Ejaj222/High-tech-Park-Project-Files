@@ -23,10 +23,9 @@ echo "sdk.dir=$ANDROID_HOME" > local.properties
 ./gradlew :app:assembleDebug
 ```
 
-Debug APK:
+After build, debug APK is at:
 
-- `LurkBDAgent/app/build/outputs/apk/debug/app-debug.apk`
-- `docs/releases/LurkBD-Agent-debug.apk`
+`LurkBDAgent/app/build/outputs/apk/debug/app-debug.apk`
 
 Open `LurkBDAgent` in Android Studio and run on an emulator/device.
 
